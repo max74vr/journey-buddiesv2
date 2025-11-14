@@ -15,7 +15,7 @@ get_header();
                 Discover adventures from our community, read their tips, and get inspired for your next journey.
             </p>
             <?php if (is_user_logged_in()) : ?>
-                <a href="<?php echo esc_url(home_url('/share-travel-story')); ?>" class="btn-primary" style="background: white !important; color: var(--primary-color) !important; border: 2px solid white;">
+                <a href="<?php echo esc_url(home_url('/share-your-travel-story')); ?>" class="btn-primary" style="background: white !important; color: var(--primary-color) !important; border: 2px solid white;">
                     ✍️ Share Your Story
                 </a>
             <?php endif; ?>
@@ -72,7 +72,7 @@ get_header();
                             No stories available right now.
                         </p>
                         <?php if (is_user_logged_in()) : ?>
-                            <a href="<?php echo esc_url(home_url('/share-travel-story')); ?>" class="btn-primary" style="margin-top: calc(var(--spacing-unit) * 3);">
+                            <a href="<?php echo esc_url(home_url('/share-your-travel-story')); ?>" class="btn-primary" style="margin-top: calc(var(--spacing-unit) * 3);">
                                 Be the first to share!
                             </a>
                         <?php endif; ?>

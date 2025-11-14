@@ -204,7 +204,7 @@ get_header();
                             <option value="budget_asc" <?php selected(isset($_GET['orderby']) && $_GET['orderby'] === 'budget_asc'); ?>>Budget: Low → High</option>
                             <option value="budget_desc" <?php selected(isset($_GET['orderby']) && $_GET['orderby'] === 'budget_desc'); ?>>Budget: High → Low</option>
                             <option value="participants" <?php selected(isset($_GET['orderby']) && $_GET['orderby'] === 'participants'); ?>>Available Seats</option>
-                            <option value="rating" <?php selected(isset($_GET['orderby']) && $_GET['orderby'] === 'rating'); ?>>Valutazione Organizer</option>
+                            <option value="rating" <?php selected(isset($_GET['orderby']) && $_GET['orderby'] === 'rating'); ?>>Organizer Rating</option>
                         </select>
                     </div>
                     </div>
@@ -278,10 +278,10 @@ get_header();
 
                 <?php else : ?>
                     <div class="no-results">
-                        <h2>Nessun trip found</h2>
+                        <h2>No trips found</h2>
                         <p>Try adjusting the filters or <a href="<?php echo esc_url(get_post_type_archive_link('viaggio')); ?>">view all trips</a>.</p>
                         <?php if (is_user_logged_in()) : ?>
-                            <a href="<?php echo esc_url(admin_url('post-new.php?post_type=viaggio')); ?>" class="btn-primary">
+                            <a href="<?php echo esc_url(home_url('/create-trip')); ?>" class="btn-primary">
                                 Create the First Trip
                             </a>
                         <?php endif; ?>
