@@ -79,7 +79,7 @@ class CDV_Post_Types {
             'show_in_rest'        => true,
             'rest_base'           => 'trips',
             'rest_controller_class' => 'WP_REST_Posts_Controller',
-            'rewrite'             => array('slug' => 'trips'),
+            'rewrite'             => array('slug' => 'trip'),
         );
 
         register_post_type('viaggio', $args);
