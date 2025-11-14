@@ -212,7 +212,11 @@ get_header();
                 global $wpdb;
                 $total_travels = wp_count_posts('viaggio')->publish;
                 $total_users = count_users()['total_users'];
-                $total_participants = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}cdv_travel_participants WHERE status = 'accepted'");
+
+                // Check if table exists before querying
+                $table_name = $wpdb->prefix . 'cdv_travel_participants';
+                $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+                $total_participants = $table_exists ? $wpdb->get_var("SELECT COUNT(*) FROM {$table_name} WHERE status = 'accepted'") : 0;
                 ?>
 
                 <div class="stat-item">

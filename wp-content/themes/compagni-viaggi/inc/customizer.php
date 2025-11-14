@@ -307,13 +307,13 @@ function cdv_customize_register($wp_customize) {
 
     // Hero Button URL
     $wp_customize->add_setting('cdv_hero_button_url', array(
-        'default'           => '/crea-viaggio',
+        'default'           => '/create-trip',
         'sanitize_callback' => 'esc_url_raw',
         'transport'         => 'refresh',
     ));
 
     $wp_customize->add_control('cdv_hero_button_url', array(
-        'label'    => 'URL Pulsante Hero',
+        'label'    => 'Hero Button URL',
         'section'  => 'cdv_hero',
         'settings' => 'cdv_hero_button_url',
         'type'     => 'url',

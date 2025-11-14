@@ -134,7 +134,7 @@ while (have_posts()) : the_post();
                 <!-- Edit/Delete for Author -->
                 <?php if (get_current_user_id() == $author_id || current_user_can('edit_others_posts')) : ?>
                     <div class="story-actions" style="margin: calc(var(--spacing-unit) * 4) 0; padding: calc(var(--spacing-unit) * 3); background: #f8f9fa; border-radius: 8px; display: flex; gap: calc(var(--spacing-unit) * 2);">
-                        <a href="<?php echo esc_url(add_query_arg('story_id', get_the_ID(), home_url('/racconta-viaggio'))); ?>" class="btn-secondary">
+                        <a href="<?php echo esc_url(add_query_arg('story_id', get_the_ID(), home_url('/share-your-travel-story'))); ?>" class="btn-secondary">
                             ✏️ Edit Story
                         </a>
                         <button type="button" id="delete-story-btn" class="btn-danger" data-story-id="<?php echo esc_attr(get_the_ID()); ?>">
