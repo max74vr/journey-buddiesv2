@@ -463,10 +463,12 @@ while (have_posts()) : the_post();
                     </div>
 
                     <!-- Wishlist Card -->
+                    <?php if (class_exists('CDV_Wishlist')) : ?>
                     <div class="sidebar-card wishlist-card">
                         <?php echo CDV_Wishlist::get_wishlist_button_html($travel_id, 'btn btn-secondary wishlist-toggle-btn'); ?>
                         <p class="wishlist-help-text">Save this trip for later</p>
                     </div>
+                    <?php endif; ?>
 
                     <!-- Join Card -->
                     <?php if (is_user_logged_in()) : ?>

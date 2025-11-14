@@ -14,7 +14,10 @@ if (!is_user_logged_in()) {
 get_header();
 
 $user_id = get_current_user_id();
-$wishlist_travels = CDV_Wishlist::get_wishlist_travels($user_id);
+$wishlist_travels = null;
+if (class_exists('CDV_Wishlist')) {
+    $wishlist_travels = CDV_Wishlist::get_wishlist_travels($user_id);
+}
 ?>
 
 <main class="site-main wishlist-page">
@@ -28,7 +31,7 @@ $wishlist_travels = CDV_Wishlist::get_wishlist_travels($user_id);
     <div class="container">
         <div class="wishlist-content">
 
-            <?php if ($wishlist_travels->have_posts()) : ?>
+            <?php if (class_exists('CDV_Wishlist') && $wishlist_travels && $wishlist_travels->have_posts()) : ?>
 
                 <div class="wishlist-count">
                     <p><?php echo $wishlist_travels->post_count; ?> <?php echo $wishlist_travels->post_count === 1 ? 'trip saved' : 'trips saved'; ?></p>
@@ -116,7 +119,7 @@ $wishlist_travels = CDV_Wishlist::get_wishlist_travels($user_id);
                     <?php endwhile; wp_reset_postdata(); ?>
                 </div>
 
-            <?php else : ?>
+            <?php elseif (class_exists('CDV_Wishlist')) : ?>
 
                 <div class="wishlist-empty">
                     <div class="empty-state">
@@ -125,7 +128,20 @@ $wishlist_travels = CDV_Wishlist::get_wishlist_travels($user_id);
                         <p>You haven't saved any trips yet.</p>
                         <p>Browse available trips and save the ones you like to find them quickly!</p>
                         <a href="<?php echo get_post_type_archive_link('viaggio'); ?>" class="btn-primary">
-                            Esplora Viaggi
+                            Browse Trips
+                        </a>
+                    </div>
+                </div>
+
+            <?php else : ?>
+
+                <div class="wishlist-empty">
+                    <div class="empty-state">
+                        <span class="empty-icon">💝</span>
+                        <h2>Wishlist Feature Coming Soon</h2>
+                        <p>The wishlist feature is currently under development.</p>
+                        <a href="<?php echo get_post_type_archive_link('viaggio'); ?>" class="btn-primary">
+                            Browse Trips
                         </a>
                     </div>
                 </div>
