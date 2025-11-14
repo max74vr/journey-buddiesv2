@@ -141,7 +141,7 @@ $received_reviews = CDV_Reviews::get_user_reviews($current_user->ID, 20);
                 <?php endif; ?>
             </button>
             <button class="tab-button" data-tab="notifications">
-                🔔 Notifiche
+                🔔 Notifications
                 <?php
                 if (class_exists('CDV_Notifications')) {
                     $notifications_count = CDV_Notifications::get_unread_count(get_current_user_id());
@@ -154,10 +154,13 @@ $received_reviews = CDV_Reviews::get_user_reviews($current_user->ID, 20);
             <button class="tab-button" data-tab="wishlist">
                 💝 Wishlist
                 <?php
-                $wishlist_count = CDV_Wishlist::get_wishlist_count(get_current_user_id());
-                if ($wishlist_count > 0) : ?>
-                    <span class="badge-count"><?php echo $wishlist_count; ?></span>
-                <?php endif; ?>
+                if (class_exists('CDV_Wishlist')) {
+                    $wishlist_count = CDV_Wishlist::get_wishlist_count(get_current_user_id());
+                    if ($wishlist_count > 0) : ?>
+                        <span class="badge-count"><?php echo $wishlist_count; ?></span>
+                    <?php endif;
+                }
+                ?>
             </button>
             <button class="tab-button" data-tab="referral">
                 🎁 Invite Friends
@@ -639,9 +642,10 @@ $received_reviews = CDV_Reviews::get_user_reviews($current_user->ID, 20);
             </div>
 
             <?php
-            $wishlist_travels = CDV_Wishlist::get_wishlist_travels($current_user->ID);
+            if (class_exists('CDV_Wishlist')) {
+                $wishlist_travels = CDV_Wishlist::get_wishlist_travels($current_user->ID);
 
-            if ($wishlist_travels && $wishlist_travels->have_posts()) : ?>
+                if ($wishlist_travels && $wishlist_travels->have_posts()) : ?>
                 <div class="wishlist-grid">
                     <?php while ($wishlist_travels->have_posts()) : $wishlist_travels->the_post();
                         $travel_id = get_the_ID();
@@ -710,17 +714,24 @@ $received_reviews = CDV_Reviews::get_user_reviews($current_user->ID, 20);
                         </div>
                     <?php endwhile; wp_reset_postdata(); ?>
                 </div>
-            <?php else : ?>
+                <?php else : ?>
+                    <div class="empty-state">
+                        <span class="empty-icon">💝</span>
+                        <h3>Your wishlist is empty</h3>
+                        <p>You haven't saved any trips yet.</p>
+                        <p>Browse the available trips and save the ones you like to find them quickly!</p>
+                        <a href="<?php echo get_post_type_archive_link('viaggio'); ?>" class="btn btn-primary">
+                            Browse Trips
+                        </a>
+                    </div>
+                <?php endif;
+            } else { ?>
                 <div class="empty-state">
                     <span class="empty-icon">💝</span>
-                    <h3>Your wishlist is empty</h3>
-                    <p>You haven't saved any trips yet.</p>
-                    <p>Browse the available trips and save the ones you like to find them quickly!</p>
-                    <a href="<?php echo get_post_type_archive_link('viaggio'); ?>" class="btn btn-primary">
-                        Browse Trips
-                    </a>
+                    <h3>Wishlist Feature Coming Soon</h3>
+                    <p>The wishlist feature is currently under development.</p>
                 </div>
-            <?php endif; ?>
+            <?php } ?>
         </div>
 
         <!-- Tab: Invite Friends (Referral) -->

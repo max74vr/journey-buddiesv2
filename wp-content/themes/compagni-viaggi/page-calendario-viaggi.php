@@ -86,8 +86,8 @@ $today_url = remove_query_arg(array('month', 'year'));
         </div>
 
         <div class="calendar-actions">
-            <a href="<?php echo esc_url($today_url); ?>" class="btn btn-primary">Oggi</a>
-            <a href="<?php echo get_post_type_archive_link('viaggio'); ?>" class="btn btn-secondary">Vista Lista</a>
+            <a href="<?php echo esc_url($today_url); ?>" class="btn btn-primary">Today</a>
+            <a href="<?php echo get_post_type_archive_link('viaggio'); ?>" class="btn btn-secondary">List View</a>
         </div>
 
         <!-- Calendar Grid -->
@@ -153,19 +153,19 @@ $today_url = remove_query_arg(array('month', 'year'));
 
         <!-- Legend -->
         <div class="calendar-legend">
-            <h3>Legenda</h3>
+            <h3>Legend</h3>
             <div class="legend-items">
                 <div class="legend-item">
-                    <span class="legend-color today-color"></span> Oggi
+                    <span class="legend-color today-color"></span> Today
                 </div>
                 <div class="legend-item">
-                    <span class="legend-color has-travels-color"></span> Giorni con viaggi
+                    <span class="legend-color has-travels-color"></span> Days with trips
                 </div>
                 <div class="legend-item">
-                    <span class="legend-color status-open"></span> Aperto
+                    <span class="legend-color status-open"></span> Open
                 </div>
                 <div class="legend-item">
-                    <span class="legend-color status-full"></span> Completo
+                    <span class="legend-color status-full"></span> Full
                 </div>
             </div>
         </div>

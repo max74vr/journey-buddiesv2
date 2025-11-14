@@ -287,11 +287,11 @@ function cdv_get_travel_status_label($post_id = null) {
     $status = get_post_meta($post_id, 'cdv_travel_status', true);
 
     $labels = array(
-        'open' => array('label' => 'Aperto', 'class' => 'success'),
-        'full' => array('label' => 'Completo', 'class' => 'warning'),
-        'in_progress' => array('label' => 'In Corso', 'class' => 'info'),
-        'completed' => array('label' => 'Completato', 'class' => 'secondary'),
-        'cancelled' => array('label' => 'Annullato', 'class' => 'error'),
+        'open' => array('label' => 'Open', 'class' => 'success'),
+        'full' => array('label' => 'Full', 'class' => 'warning'),
+        'in_progress' => array('label' => 'In Progress', 'class' => 'info'),
+        'completed' => array('label' => 'Completed', 'class' => 'secondary'),
+        'cancelled' => array('label' => 'Cancelled', 'class' => 'error'),
     );
 
     if (empty($status)) {
@@ -311,9 +311,9 @@ function cdv_get_travel_status_label($post_id = null) {
 function cdv_pagination() {
     the_posts_pagination(array(
         'mid_size' => 2,
-        'prev_text' => '<span class="pagination-arrow">←</span> <span class="pagination-text">Precedente</span>',
-        'next_text' => '<span class="pagination-text">Successivo</span> <span class="pagination-arrow">→</span>',
-        'before_page_number' => '<span class="screen-reader-text">Pagina </span>',
+        'prev_text' => '<span class="pagination-arrow">←</span> <span class="pagination-text">Previous</span>',
+        'next_text' => '<span class="pagination-text">Next</span> <span class="pagination-arrow">→</span>',
+        'before_page_number' => '<span class="screen-reader-text">Page </span>',
         'class' => 'cdv-pagination',
     ));
 }

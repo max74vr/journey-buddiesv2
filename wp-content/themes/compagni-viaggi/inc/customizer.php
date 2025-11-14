@@ -293,13 +293,13 @@ function cdv_customize_register($wp_customize) {
 
     // Hero Button Text
     $wp_customize->add_setting('cdv_hero_button_text', array(
-        'default'           => 'Inserisci il Tuo Annuncio',
+        'default'           => 'Create Your Trip Listing',
         'sanitize_callback' => 'sanitize_text_field',
         'transport'         => 'refresh',
     ));
 
     $wp_customize->add_control('cdv_hero_button_text', array(
-        'label'    => 'Testo Pulsante Hero',
+        'label'    => 'Hero Button Text',
         'section'  => 'cdv_hero',
         'settings' => 'cdv_hero_button_text',
         'type'     => 'text',

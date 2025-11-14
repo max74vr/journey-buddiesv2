@@ -55,17 +55,17 @@
                     Dashboard
                 </a>
                 <a href="<?php echo esc_url(home_url('/crea-viaggio')); ?>" class="btn-header btn-header-primary">
-                    Crea Annuncio
+                    Post Trip
                 </a>
                 <a href="<?php echo esc_url(wp_logout_url(home_url())); ?>" class="btn-header btn-header-ghost">
-                    Esci
+                    Logout
                 </a>
             <?php else : ?>
                 <a href="<?php echo esc_url(home_url('/accedi')); ?>" class="btn-header btn-header-secondary">
-                    Accedi
+                    Login
                 </a>
                 <a href="<?php echo esc_url(home_url('/registrazione')); ?>" class="btn-header btn-header-primary">
-                    Registrati
+                    Register
                 </a>
             <?php endif; ?>
         </div>
@@ -79,7 +79,7 @@
 function cdv_fallback_menu() {
     echo '<ul class="nav-menu">';
     echo '<li><a href="' . esc_url(home_url('/')) . '">Home</a></li>';
-    echo '<li><a href="' . esc_url(home_url('/viaggi')) . '">Viaggi</a></li>';
+    echo '<li><a href="' . esc_url(home_url('/viaggi')) . '">Trips</a></li>';
     if (is_user_logged_in()) {
         echo '<li><a href="' . esc_url(home_url('/dashboard')) . '">Dashboard</a></li>';
     }
@@ -92,15 +92,15 @@ function cdv_fallback_menu() {
 function cdv_fallback_mobile_menu() {
     echo '<ul class="mobile-menu">';
     echo '<li><a href="' . esc_url(home_url('/')) . '">🏠 Home</a></li>';
-    echo '<li><a href="' . esc_url(home_url('/viaggi')) . '">✈️ Viaggi</a></li>';
-    echo '<li><a href="' . esc_url(home_url('/racconti')) . '">📖 Racconti</a></li>';
+    echo '<li><a href="' . esc_url(home_url('/viaggi')) . '">✈️ Trips</a></li>';
+    echo '<li><a href="' . esc_url(home_url('/racconti')) . '">📖 Stories</a></li>';
     if (is_user_logged_in()) {
         echo '<li><a href="' . esc_url(home_url('/dashboard')) . '">👤 Dashboard</a></li>';
-        echo '<li><a href="' . esc_url(home_url('/crea-viaggio')) . '">➕ Crea Annuncio</a></li>';
-        echo '<li><a href="' . esc_url(wp_logout_url(home_url())) . '" style="background: rgba(220, 53, 69, 0.2); color: #ff6b6b;">Esci</a></li>';
+        echo '<li><a href="' . esc_url(home_url('/crea-viaggio')) . '">➕ Post Trip</a></li>';
+        echo '<li><a href="' . esc_url(wp_logout_url(home_url())) . '" style="background: rgba(220, 53, 69, 0.2); color: #ff6b6b;">Logout</a></li>';
     } else {
-        echo '<li><a href="' . esc_url(home_url('/accedi')) . '">🔐 Accedi</a></li>';
-        echo '<li><a href="' . esc_url(home_url('/registrazione')) . '" style="background: var(--primary-color); color: white;">✨ Registrati</a></li>';
+        echo '<li><a href="' . esc_url(home_url('/accedi')) . '">🔐 Login</a></li>';
+        echo '<li><a href="' . esc_url(home_url('/registrazione')) . '" style="background: var(--primary-color); color: white;">✨ Register</a></li>';
     }
     echo '</ul>';
 }
