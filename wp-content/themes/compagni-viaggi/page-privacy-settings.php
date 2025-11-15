@@ -302,5 +302,42 @@ $cookie_consent = get_user_meta($user_id, 'cdv_cookie_consent', true);
 }
 </style>
 
+<script>
+jQuery(document).ready(function($) {
+    // Handle cookie consent changes
+    $('.gdpr-consent-checkbox').on('change', function() {
+        var analytics = $('#cdv-analytics-consent').is(':checked') || $('[data-consent-type="analytics"]').is(':checked');
+        var marketing = $('#cdv-marketing-consent').is(':checked') || $('[data-consent-type="marketing"]').is(':checked');
+
+        // Save to cookie
+        var consent = JSON.stringify({analytics: analytics, marketing: marketing});
+        document.cookie = 'cdv_cookie_consent=' + consent + '; path=/; max-age=' + (365*24*60*60) + '; SameSite=Lax';
+
+        // Save to database
+        $.ajax({
+            url: cdvAjax.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'cdv_save_cookie_consent',
+                nonce: cdvAjax.nonce,
+                analytics: analytics,
+                marketing: marketing
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Show brief success message
+                    var $checkbox = $('.gdpr-consent-checkbox:last').closest('.privacy-setting-item');
+                    var $message = $('<div class="save-message" style="color: #48bb78; margin-top: 10px; font-size: 0.9rem;">✓ Preferenze salvate</div>');
+                    $checkbox.append($message);
+                    setTimeout(function() {
+                        $message.fadeOut(function() { $(this).remove(); });
+                    }, 2000);
+                }
+            }
+        });
+    });
+});
+</script>
+
 <?php
 get_footer();
