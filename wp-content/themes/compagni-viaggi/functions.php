@@ -333,15 +333,26 @@ function cdv_custom_avatar($avatar, $id_or_email, $size, $default, $alt, $args) 
         return $avatar;
     }
 
-    // Check if user has a custom avatar (not using default gravatar)
-    $has_custom_avatar = get_user_meta($user->ID, 'cdv_has_custom_avatar', true);
+    // Check if user has uploaded a custom profile image
+    $custom_profile_image = get_user_meta($user->ID, 'cdv_profile_image', true);
 
-    // If no custom avatar, use letter avatar
-    if (!$has_custom_avatar) {
-        return cdv_generate_letter_avatar($user->ID, $size);
+    // If user has a custom uploaded profile image (approved by admin), use it
+    if (!empty($custom_profile_image)) {
+        $image_url = wp_get_attachment_url($custom_profile_image);
+        if ($image_url) {
+            return sprintf(
+                '<img alt="%s" src="%s" class="avatar avatar-custom avatar-%d photo" height="%d" width="%d" loading="lazy" decoding="async" style="border-radius: 50%%; object-fit: cover; aspect-ratio: 1/1;">',
+                esc_attr($alt),
+                esc_url($image_url),
+                (int) $size,
+                (int) $size,
+                (int) $size
+            );
+        }
     }
 
-    return $avatar;
+    // Otherwise, use letter avatar for all users
+    return cdv_generate_letter_avatar($user->ID, $size);
 }
 add_filter('get_avatar', 'cdv_custom_avatar', 10, 6);
 

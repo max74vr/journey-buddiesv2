@@ -12,9 +12,8 @@
                 } else {
                     echo '<h3>' . esc_html(get_bloginfo('name')) . '</h3>';
                 }
-                ?>
-                <p><?php bloginfo('description'); ?></p>
-                <?php
+
+                // Footer tagline (customizable)
                 $footer_tagline = get_theme_mod('cdv_footer_tagline', 'Trova compagni di viaggio e organizza avventure insieme.');
                 if ($footer_tagline) :
                 ?>

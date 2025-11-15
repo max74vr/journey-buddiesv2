@@ -749,30 +749,35 @@ $received_reviews = CDV_Reviews::get_user_reviews($current_user->ID, 20);
 
             <div class="referral-code-section">
                 <h3>📋 Your Referral Code</h3>
+                <p style="color: #666; margin-bottom: 15px;">Share this code with your friends when they register</p>
                 <div class="referral-code-box">
-                    <div class="code-display">
-                        <span id="referral-code" class="referral-code">Loading...</span>
-                        <button id="copy-referral-code-btn" class="btn btn-sm btn-secondary" title="Copy code">
-                            📋 Copy
+                    <div class="code-display" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                        <div style="flex: 1; text-align: center;">
+                            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.8); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Your Code</div>
+                            <span id="referral-code" class="referral-code" style="font-size: 2.5rem; font-weight: 800; color: white; font-family: 'Courier New', monospace; letter-spacing: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">Loading...</span>
+                        </div>
+                        <button id="copy-referral-code-btn" class="btn btn-primary" style="background: white; color: #667eea; border: none; padding: 15px 30px; font-size: 1.1rem; font-weight: 600; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            <span style="font-size: 1.3rem; margin-right: 8px;">📋</span> Copy Code
                         </button>
                     </div>
                 </div>
 
                 <div class="referral-link-box">
-                    <label>🔗 Invite Link:</label>
+                    <label style="font-weight: 600; font-size: 1.1rem; margin-bottom: 10px; display: block;">🔗 Share This Link</label>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Send this link directly to your friends</p>
                     <div class="link-display">
-                        <input type="text" id="referral-link" readonly value="Loading...">
-                        <button id="copy-referral-link-btn" class="btn btn-sm btn-primary" title="Copy link">
-                            📋 Copy Link
+                        <input type="text" id="referral-link" readonly value="Loading..." style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem; font-family: monospace;">
+                        <button id="copy-referral-link-btn" class="btn btn-primary" style="padding: 12px 24px; font-weight: 600;">
+                            📋 Copy
                         </button>
-                        <button id="share-referral-btn" class="btn btn-sm btn-success" title="Share">
+                        <button id="share-referral-btn" class="btn btn-success" style="padding: 12px 24px; font-weight: 600;">
                             💬 Share
                         </button>
                     </div>
                 </div>
 
                 <div class="referral-share-buttons">
-                <p><strong>Share on:</strong></p>
+                    <p><strong>Share on Social Media:</strong></p>
                     <div class="social-share-ref"></div>
                 </div>
             </div>
