@@ -1,8 +1,6 @@
 <?php
 /**
- * Wishlist System
- *
- * Allows users to save trips to their wishlist
+ * Wishlist management for travels
  */
 
 if (!defined('ABSPATH')) {
@@ -20,7 +18,7 @@ class CDV_Wishlist {
     }
 
     /**
-     * Create wishlist table
+     * Create database table for wishlist
      */
     public static function create_table() {
         global $wpdb;
@@ -33,7 +31,7 @@ class CDV_Wishlist {
             user_id bigint(20) UNSIGNED NOT NULL,
             travel_id bigint(20) UNSIGNED NOT NULL,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
+            PRIMARY KEY  (id),
             UNIQUE KEY unique_wishlist (user_id, travel_id),
             KEY user_id (user_id),
             KEY travel_id (travel_id)
@@ -44,19 +42,35 @@ class CDV_Wishlist {
     }
 
     /**
+     * Check if travel is in user's wishlist
+     */
+    public static function is_in_wishlist($user_id, $travel_id) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'cdv_wishlist';
+
+        $exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM $table WHERE user_id = %d AND travel_id = %d",
+            $user_id,
+            $travel_id
+        ));
+
+        return !empty($exists);
+    }
+
+    /**
      * Add travel to wishlist
      */
     public static function add_to_wishlist($user_id, $travel_id) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'cdv_wishlist';
+        $table = $wpdb->prefix . 'cdv_wishlist';
 
         // Check if already in wishlist
         if (self::is_in_wishlist($user_id, $travel_id)) {
-            return true;
+            return new WP_Error('already_in_wishlist', __('This trip is already in your wishlist.', 'compagni-di-viaggi'));
         }
 
         $result = $wpdb->insert(
-            $table_name,
+            $table,
             array(
                 'user_id' => $user_id,
                 'travel_id' => $travel_id,
@@ -65,7 +79,11 @@ class CDV_Wishlist {
             array('%d', '%d', '%s')
         );
 
-        return $result !== false;
+        if ($result) {
+            return $wpdb->insert_id;
+        }
+
+        return new WP_Error('db_error', __('Error adding to wishlist.', 'compagni-di-viaggi'));
     }
 
     /**
@@ -73,32 +91,76 @@ class CDV_Wishlist {
      */
     public static function remove_from_wishlist($user_id, $travel_id) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'cdv_wishlist';
+        $table = $wpdb->prefix . 'cdv_wishlist';
 
-        return $wpdb->delete(
-            $table_name,
+        $result = $wpdb->delete(
+            $table,
             array(
                 'user_id' => $user_id,
                 'travel_id' => $travel_id,
             ),
             array('%d', '%d')
         );
+
+        return $result !== false;
     }
 
     /**
-     * Check if travel is in user's wishlist
+     * Toggle wishlist (add/remove)
      */
-    public static function is_in_wishlist($user_id, $travel_id) {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'cdv_wishlist';
+    public static function toggle_wishlist($user_id, $travel_id) {
+        if (self::is_in_wishlist($user_id, $travel_id)) {
+            $result = self::remove_from_wishlist($user_id, $travel_id);
+            return array(
+                'action' => 'removed',
+                'success' => $result,
+            );
+        } else {
+            $result = self::add_to_wishlist($user_id, $travel_id);
+            if (is_wp_error($result)) {
+                return array(
+                    'action' => 'add_failed',
+                    'success' => false,
+                    'error' => $result->get_error_message(),
+                );
+            }
+            return array(
+                'action' => 'added',
+                'success' => true,
+            );
+        }
+    }
 
-        $count = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM $table_name WHERE user_id = %d AND travel_id = %d",
-            $user_id,
-            $travel_id
+    /**
+     * Get user's wishlist travels
+     */
+    public static function get_wishlist_travels($user_id, $args = array()) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'cdv_wishlist';
+
+        // Get travel IDs from wishlist
+        $travel_ids = $wpdb->get_col($wpdb->prepare(
+            "SELECT travel_id FROM $table WHERE user_id = %d ORDER BY created_at DESC",
+            $user_id
         ));
 
-        return $count > 0;
+        if (empty($travel_ids)) {
+            // Return empty query
+            return new WP_Query(array('post__in' => array(0)));
+        }
+
+        // Query travels
+        $defaults = array(
+            'post_type' => 'viaggio',
+            'post__in' => $travel_ids,
+            'orderby' => 'post__in',
+            'posts_per_page' => -1,
+            'post_status' => 'publish',
+        );
+
+        $args = wp_parse_args($args, $defaults);
+
+        return new WP_Query($args);
     }
 
     /**
@@ -106,75 +168,12 @@ class CDV_Wishlist {
      */
     public static function get_wishlist_count($user_id) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'cdv_wishlist';
+        $table = $wpdb->prefix . 'cdv_wishlist';
 
         return (int) $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM $table_name WHERE user_id = %d",
+            "SELECT COUNT(*) FROM $table WHERE user_id = %d",
             $user_id
         ));
-    }
-
-    /**
-     * Get all wishlist travels for user
-     */
-    public static function get_wishlist_travels($user_id) {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'cdv_wishlist';
-
-        $travel_ids = $wpdb->get_col($wpdb->prepare(
-            "SELECT travel_id FROM $table_name WHERE user_id = %d ORDER BY created_at DESC",
-            $user_id
-        ));
-
-        if (empty($travel_ids)) {
-            return array();
-        }
-
-        // Get WP_Post objects
-        $args = array(
-            'post_type' => 'viaggio',
-            'post__in' => $travel_ids,
-            'orderby' => 'post__in',
-            'posts_per_page' => -1,
-        );
-
-        $query = new WP_Query($args);
-        return $query->posts;
-    }
-
-    /**
-     * Get wishlist button HTML
-     */
-    public static function get_wishlist_button_html($travel_id, $classes = '') {
-        if (!is_user_logged_in()) {
-            return sprintf(
-                '<a href="%s" class="%s" title="Login to save">
-                    <span class="wishlist-icon">♡</span>
-                    <span class="wishlist-text">Save</span>
-                </a>',
-                wp_login_url(get_permalink()),
-                esc_attr($classes)
-            );
-        }
-
-        $user_id = get_current_user_id();
-        $in_wishlist = self::is_in_wishlist($user_id, $travel_id);
-        $active_class = $in_wishlist ? 'wishlist-active' : '';
-        $icon = $in_wishlist ? '♥' : '♡';
-        $text = $in_wishlist ? 'Saved' : 'Save';
-
-        return sprintf(
-            '<button type="button" class="wishlist-btn %s %s" data-travel-id="%d" title="%s">
-                <span class="wishlist-icon">%s</span>
-                <span class="wishlist-text">%s</span>
-            </button>',
-            esc_attr($classes),
-            esc_attr($active_class),
-            $travel_id,
-            esc_attr($text),
-            $icon,
-            esc_html($text)
-        );
     }
 
     /**
@@ -184,49 +183,34 @@ class CDV_Wishlist {
         check_ajax_referer('cdv_ajax_nonce', 'nonce');
 
         if (!is_user_logged_in()) {
-            wp_send_json_error(array('message' => 'You must be logged in to save trips.'));
+            wp_send_json_error(array('message' => 'You must be logged in.'));
         }
 
         $user_id = get_current_user_id();
         $travel_id = isset($_POST['travel_id']) ? intval($_POST['travel_id']) : 0;
 
         if (!$travel_id) {
-            wp_send_json_error(array('message' => 'Invalid trip ID.'));
+            wp_send_json_error(array('message' => 'Invalid travel ID.'));
         }
 
         // Check if travel exists
         $travel = get_post($travel_id);
         if (!$travel || $travel->post_type !== 'viaggio') {
-            wp_send_json_error(array('message' => 'Trip not found.'));
+            wp_send_json_error(array('message' => 'Travel not found.'));
         }
 
-        // Toggle wishlist
-        $is_in_wishlist = self::is_in_wishlist($user_id, $travel_id);
+        $result = self::toggle_wishlist($user_id, $travel_id);
 
-        if ($is_in_wishlist) {
-            // Remove from wishlist
-            $result = self::remove_from_wishlist($user_id, $travel_id);
-            if ($result !== false) {
-                wp_send_json_success(array(
-                    'action' => 'removed',
-                    'in_wishlist' => false,
-                    'message' => 'Trip removed from wishlist.',
-                ));
-            } else {
-                wp_send_json_error(array('message' => 'Error removing from wishlist.'));
-            }
+        if ($result['success']) {
+            wp_send_json_success(array(
+                'action' => $result['action'],
+                'message' => $result['action'] === 'added' ? 'Added to wishlist' : 'Removed from wishlist',
+                'in_wishlist' => $result['action'] === 'added',
+            ));
         } else {
-            // Add to wishlist
-            $result = self::add_to_wishlist($user_id, $travel_id);
-            if ($result) {
-                wp_send_json_success(array(
-                    'action' => 'added',
-                    'in_wishlist' => true,
-                    'message' => 'Trip added to wishlist!',
-                ));
-            } else {
-                wp_send_json_error(array('message' => 'Error adding to wishlist.'));
-            }
+            wp_send_json_error(array(
+                'message' => isset($result['error']) ? $result['error'] : 'Error updating wishlist.',
+            ));
         }
     }
 }

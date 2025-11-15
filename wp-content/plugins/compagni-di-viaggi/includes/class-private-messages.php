@@ -19,7 +19,7 @@ class CDV_Private_Messages {
         add_action('wp_ajax_cdv_send_private_message', array(__CLASS__, 'ajax_send_message'));
         add_action('wp_ajax_cdv_get_conversation', array(__CLASS__, 'ajax_get_conversation'));
         add_action('wp_ajax_cdv_get_conversations_list', array(__CLASS__, 'ajax_get_conversations_list'));
-        add_action('wp_ajax_cdv_get_user_conversations', array(__CLASS__, 'ajax_get_user_conversations'));
+        add_action('wp_ajax_cdv_get_user_conversations', array(__CLASS__, 'ajax_get_user_conversations_formatted'));
         add_action('wp_ajax_cdv_block_conversation', array(__CLASS__, 'ajax_block_conversation'));
         add_action('wp_ajax_cdv_unblock_conversation', array(__CLASS__, 'ajax_unblock_conversation'));
         add_action('wp_ajax_cdv_mark_messages_read', array(__CLASS__, 'ajax_mark_messages_read'));
@@ -403,9 +403,9 @@ class CDV_Private_Messages {
     }
 
     /**
-     * AJAX: Get user conversations (alias for dashboard compatibility)
+     * AJAX: Get user conversations formatted for dashboard
      */
-    public static function ajax_get_user_conversations() {
+    public static function ajax_get_user_conversations_formatted() {
         check_ajax_referer('cdv_ajax_nonce', 'nonce');
 
         if (!is_user_logged_in()) {
@@ -415,26 +415,26 @@ class CDV_Private_Messages {
         $user_id = get_current_user_id();
         $conversations = self::get_user_conversations($user_id);
 
-        // Format for dashboard display
-        $formatted_conversations = array();
+        // Format conversations with user and travel data
+        $formatted = array();
         foreach ($conversations as $conv) {
             $other_user = get_userdata($conv->other_user_id);
             $travel = get_post($conv->travel_id);
 
             if ($other_user && $travel) {
-                $formatted_conversations[] = array(
+                $formatted[] = array(
                     'other_user_id' => $conv->other_user_id,
                     'other_user_name' => $other_user->display_name,
-                    'other_user_avatar' => get_avatar_url($conv->other_user_id, array('size' => 50)),
+                    'avatar' => get_avatar($conv->other_user_id, 48),
                     'travel_id' => $conv->travel_id,
                     'travel_title' => $travel->post_title,
-                    'last_message_time' => $conv->last_message_time,
+                    'last_message_time' => human_time_diff(strtotime($conv->last_message_time), current_time('timestamp')) . ' ago',
                     'unread_count' => $conv->unread_count,
                 );
             }
         }
 
-        wp_send_json_success(array('conversations' => $formatted_conversations));
+        wp_send_json_success($formatted);
     }
 
     /**
