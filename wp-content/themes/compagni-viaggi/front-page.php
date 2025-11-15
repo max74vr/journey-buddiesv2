@@ -68,16 +68,24 @@ get_header();
                     'post_type' => 'viaggio',
                     'posts_per_page' => 6,
                     'meta_query' => array(
+                        'relation' => 'AND',
                         array(
                             'key' => 'cdv_travel_status',
                             'value' => 'open',
                             'compare' => '=',
                         ),
                         array(
-                            'key' => 'cdv_end_date',
-                            'value' => date('Y-m-d'),
-                            'compare' => '>=',
-                            'type' => 'DATE',
+                            'relation' => 'OR',
+                            array(
+                                'key' => 'cdv_end_date',
+                                'value' => date('Y-m-d'),
+                                'compare' => '>=',
+                                'type' => 'DATE',
+                            ),
+                            array(
+                                'key' => 'cdv_end_date',
+                                'compare' => 'NOT EXISTS',
+                            ),
                         ),
                     ),
                 ));

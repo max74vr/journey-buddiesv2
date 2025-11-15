@@ -237,9 +237,16 @@ get_header();
                 if (have_posts()) :
                     while (have_posts()) : the_post();
                         $end_date = get_post_meta(get_the_ID(), 'cdv_end_date', true);
-                        if ($end_date && $end_date < $today) {
-                            $expired_travels[] = $post;
+                        // Only mark as expired if end_date exists and is valid
+                        if (!empty($end_date)) {
+                            $end_timestamp = @strtotime($end_date);
+                            if ($end_timestamp !== false && $end_timestamp > 0 && $end_date < $today) {
+                                $expired_travels[] = $post;
+                            } else {
+                                $active_travels[] = $post;
+                            }
                         } else {
+                            // No end date, consider it active
                             $active_travels[] = $post;
                         }
                     endwhile;

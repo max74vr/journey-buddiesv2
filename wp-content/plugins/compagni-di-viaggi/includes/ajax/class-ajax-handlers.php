@@ -472,24 +472,66 @@ class CDV_Ajax_Handlers {
         $description = isset($_POST['description']) ? wp_kses_post($_POST['description']) : '';
         $destination = isset($_POST['destination']) ? sanitize_text_field($_POST['destination']) : '';
         $country = isset($_POST['country']) ? sanitize_text_field($_POST['country']) : '';
-        $start_date = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : '';
-        $end_date = isset($_POST['end_date']) ? sanitize_text_field($_POST['end_date']) : '';
         $budget = isset($_POST['budget']) ? intval($_POST['budget']) : 0;
         $max_participants = isset($_POST['max_participants']) ? intval($_POST['max_participants']) : 5;
         $date_type = isset($_POST['date_type']) ? sanitize_text_field($_POST['date_type']) : 'precise';
 
-        if (empty($title) || empty($description) || empty($destination) || empty($country) ||
-            empty($start_date) || empty($end_date) || $budget <= 0 || $max_participants < 2) {
+        // Handle dates based on date_type
+        if ($date_type === 'month') {
+            $travel_month = isset($_POST['travel_month']) ? sanitize_text_field($_POST['travel_month']) : '';
+
+            if (empty($travel_month)) {
+                wp_send_json_error(array('message' => 'Please select a travel month.'));
+            }
+
+            // Validate month format (YYYY-MM)
+            if (!preg_match('/^\d{4}-\d{2}$/', $travel_month)) {
+                wp_send_json_error(array('message' => 'Invalid month format.'));
+            }
+
+            // Generate start_date and end_date from month (first to last day of month)
+            $start_date = $travel_month . '-01';
+            $end_timestamp = @strtotime($start_date);
+
+            // Validate that the date is valid
+            if ($end_timestamp === false || $end_timestamp <= 0) {
+                wp_send_json_error(array('message' => 'Invalid travel month.'));
+            }
+
+            $end_date = date('Y-m-t', $end_timestamp); // Last day of month
+        } else {
+            $start_date = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : '';
+            $end_date = isset($_POST['end_date']) ? sanitize_text_field($_POST['end_date']) : '';
+            $travel_month = '';
+
+            if (empty($start_date) || empty($end_date)) {
+                wp_send_json_error(array('message' => 'Please specify start and end dates.'));
+            }
+
+            // Validate date formats
+            $start_timestamp = @strtotime($start_date);
+            $end_timestamp = @strtotime($end_date);
+
+            if ($start_timestamp === false || $start_timestamp <= 0) {
+                wp_send_json_error(array('message' => 'Invalid start date format.'));
+            }
+
+            if ($end_timestamp === false || $end_timestamp <= 0) {
+                wp_send_json_error(array('message' => 'Invalid end date format.'));
+            }
+
+            // Validate dates
+            if ($end_timestamp <= $start_timestamp) {
+                wp_send_json_error(array('message' => 'The end date must be after the start date.'));
+            }
+
+            if ($start_timestamp < strtotime('today')) {
+                wp_send_json_error(array('message' => 'The start date cannot be in the past.'));
+            }
+        }
+
+        if (empty($title) || empty($description) || empty($destination) || empty($country) || $budget <= 0 || $max_participants < 2) {
             wp_send_json_error(array('message' => 'Please fill in all required fields.'));
-        }
-
-        // Validate dates
-        if (strtotime($end_date) <= strtotime($start_date)) {
-            wp_send_json_error(array('message' => 'The end date must be after the start date.'));
-        }
-
-        if (strtotime($start_date) < strtotime('today')) {
-            wp_send_json_error(array('message' => 'The start date cannot be in the past.'));
         }
 
         // Create travel post
@@ -513,9 +555,36 @@ class CDV_Ajax_Handlers {
         update_post_meta($travel_id, 'cdv_start_date', $start_date);
         update_post_meta($travel_id, 'cdv_end_date', $end_date);
         update_post_meta($travel_id, 'cdv_date_type', $date_type);
+        update_post_meta($travel_id, 'cdv_travel_month', $travel_month);
         update_post_meta($travel_id, 'cdv_budget', $budget);
         update_post_meta($travel_id, 'cdv_max_participants', $max_participants);
         update_post_meta($travel_id, 'cdv_travel_status', 'open');
+
+        // Save optional fields
+        if (isset($_POST['travel_transport']) && is_array($_POST['travel_transport'])) {
+            $transport = array_map('sanitize_text_field', $_POST['travel_transport']);
+            update_post_meta($travel_id, 'cdv_travel_transport', $transport);
+        }
+
+        if (isset($_POST['travel_accommodation'])) {
+            update_post_meta($travel_id, 'cdv_travel_accommodation', sanitize_text_field($_POST['travel_accommodation']));
+        }
+
+        if (isset($_POST['travel_difficulty'])) {
+            update_post_meta($travel_id, 'cdv_travel_difficulty', sanitize_text_field($_POST['travel_difficulty']));
+        }
+
+        if (isset($_POST['travel_meals'])) {
+            update_post_meta($travel_id, 'cdv_travel_meals', sanitize_text_field($_POST['travel_meals']));
+        }
+
+        if (isset($_POST['travel_guide_type'])) {
+            update_post_meta($travel_id, 'cdv_travel_guide_type', sanitize_text_field($_POST['travel_guide_type']));
+        }
+
+        if (isset($_POST['travel_requirements'])) {
+            update_post_meta($travel_id, 'cdv_travel_requirements', sanitize_textarea_field($_POST['travel_requirements']));
+        }
 
         // Set travel types
         if (isset($_POST['travel_types']) && is_array($_POST['travel_types'])) {

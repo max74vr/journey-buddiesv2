@@ -121,24 +121,74 @@ while (have_posts()) : the_post();
                             );
                             ?>
 
-                            <?php if ($date_type === 'month' && $travel_month) : ?>
+                            <?php if ($date_type === 'month' && !empty($travel_month)) : ?>
+                                <?php
+                                $month_timestamp = @strtotime($travel_month . '-01');
+                                if ($month_timestamp !== false && $month_timestamp > 0) :
+                                ?>
                                 <div class="detail-item">
-                                    <strong>📅 Periodo:</strong>
-                                    <span><?php echo date_i18n('F Y', strtotime($travel_month . '-01')); ?> (flessibile)</span>
+                                    <strong>📅 Period:</strong>
+                                    <span><?php echo esc_html(date_i18n('F Y', $month_timestamp)); ?> <em style="color: var(--text-medium);">(flexible)</em></span>
                                 </div>
-                            <?php else : ?>
-                                <?php if ($start_date) : ?>
+                                <?php else : ?>
+                                    <?php
+                                    // Fallback parsing
+                                    $parts = explode('-', $travel_month);
+                                    if (count($parts) === 2 && is_numeric($parts[0]) && is_numeric($parts[1])) :
+                                        $month_num = (int)$parts[1];
+                                        if ($month_num >= 1 && $month_num <= 12) :
+                                            $timestamp = mktime(0, 0, 0, $month_num, 1, (int)$parts[0]);
+                                    ?>
                                     <div class="detail-item">
-                                        <strong>📅 Inizio:</strong>
-                                        <span><?php echo date_i18n('d M Y', strtotime($start_date)); ?></span>
+                                        <strong>📅 Period:</strong>
+                                        <span><?php echo esc_html(date_i18n('F Y', $timestamp)); ?> <em style="color: var(--text-medium);">(flexible)</em></span>
                                     </div>
+                                        <?php else : ?>
+                                    <div class="detail-item">
+                                        <strong>📅 Period:</strong>
+                                        <span><?php echo esc_html($travel_month); ?> <em style="color: var(--text-medium);">(flexible)</em></span>
+                                    </div>
+                                        <?php endif; ?>
+                                    <?php else : ?>
+                                    <div class="detail-item">
+                                        <strong>📅 Period:</strong>
+                                        <span><?php echo esc_html($travel_month); ?> <em style="color: var(--text-medium);">(flexible)</em></span>
+                                    </div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            <?php else : ?>
+                                <?php if (!empty($start_date)) : ?>
+                                    <?php
+                                    $start_timestamp = @strtotime($start_date);
+                                    if ($start_timestamp !== false && $start_timestamp > 0) :
+                                    ?>
+                                    <div class="detail-item">
+                                        <strong>📅 Start:</strong>
+                                        <span><?php echo esc_html(date_i18n('M d, Y', $start_timestamp)); ?></span>
+                                    </div>
+                                    <?php else : ?>
+                                    <div class="detail-item">
+                                        <strong>📅 Start:</strong>
+                                        <span><?php echo esc_html($start_date); ?></span>
+                                    </div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
 
-                                <?php if ($end_date) : ?>
+                                <?php if (!empty($end_date)) : ?>
+                                    <?php
+                                    $end_timestamp = @strtotime($end_date);
+                                    if ($end_timestamp !== false && $end_timestamp > 0) :
+                                    ?>
                                     <div class="detail-item">
-                                        <strong>📅 Fine:</strong>
-                                        <span><?php echo date_i18n('d M Y', strtotime($end_date)); ?></span>
+                                        <strong>📅 End:</strong>
+                                        <span><?php echo esc_html(date_i18n('M d, Y', $end_timestamp)); ?></span>
                                     </div>
+                                    <?php else : ?>
+                                    <div class="detail-item">
+                                        <strong>📅 End:</strong>
+                                        <span><?php echo esc_html($end_date); ?></span>
+                                    </div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             <?php endif; ?>
 
