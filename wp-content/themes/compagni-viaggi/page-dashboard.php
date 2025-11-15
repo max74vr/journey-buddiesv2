@@ -3621,15 +3621,15 @@ document.addEventListener('DOMContentLoaded', function() {
                            target="_blank" class="btn btn-sm" style="background: #1877f2; color: white;">
                             Facebook
                         </a>
-                        <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(stats.link)}&text=${encodeURIComponent('Join Compagni di Viaggi!')}"
+                        <a href="https://twitter.com/intent/tweet?url=${encodeURIComponent(stats.link)}&text=${encodeURIComponent('Join Journey Buddies!')}"
                            target="_blank" class="btn btn-sm" style="background: #1da1f2; color: white;">
                             Twitter
                         </a>
-                        <a href="https://wa.me/?text=${encodeURIComponent('Join Compagni di Viaggi! ' + stats.link)}"
+                        <a href="https://wa.me/?text=${encodeURIComponent('Join Journey Buddies! ' + stats.link)}"
                            target="_blank" class="btn btn-sm" style="background: #25d366; color: white;">
                             WhatsApp
                         </a>
-                        <a href="mailto:?subject=${encodeURIComponent('Join Compagni di Viaggi!')}&body=${encodeURIComponent('I found a great platform to meet travel buddies! Sign up with my link: ' + stats.link)}"
+                        <a href="mailto:?subject=${encodeURIComponent('Join Journey Buddies!')}&body=${encodeURIComponent('I found a great platform to meet travel buddies! Sign up with my link: ' + stats.link)}"
                            class="btn btn-sm" style="background: #ea4335; color: white;">
                             Email
                         </a>
@@ -3668,7 +3668,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (navigator.share) {
             navigator.share({
-                title: 'Join Compagni di Viaggi!',
+                title: 'Join Journey Buddies!',
                 text: 'I found a great platform to meet travel buddies!',
                 url: link
             });

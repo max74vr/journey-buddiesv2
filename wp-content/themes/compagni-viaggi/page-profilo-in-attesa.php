@@ -34,7 +34,7 @@ get_header();
 
             <h1>Your profile is waiting for approval</h1>
 
-            <p class="subtitle">Thanks for joining Compagni di Viaggi!</p>
+            <p class="subtitle">Thanks for joining Journey Buddies!</p>
 
             <div class="status-box">
                 <div class="status-header">

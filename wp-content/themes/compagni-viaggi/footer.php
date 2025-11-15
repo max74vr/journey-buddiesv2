@@ -37,7 +37,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p><?php echo wp_kses_post(get_theme_mod('cdv_footer_copyright', '© ' . date('Y') . ' Compagni di viaggi. Tutti i diritti riservati.')); ?></p>
+            <p><?php echo wp_kses_post(get_theme_mod('cdv_footer_copyright', '© ' . date('Y') . ' Journey Buddies. All rights reserved.')); ?></p>
         </div>
     </div>
 </footer>

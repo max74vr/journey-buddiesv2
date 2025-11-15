@@ -30,7 +30,7 @@ if ($success) {
                     <p>Your email address was verified successfully.</p>
 
                     <div class="next-steps">
-                        <h3>🎉 Welcome to Compagni di Viaggi!</h3>
+                        <h3>🎉 Welcome to Journey Buddies!</h3>
                         <p><strong>Your account is now active and ready to use.</strong></p>
                         <p>You can now:</p>
                         <ul style="text-align: left; display: inline-block;">

@@ -86,7 +86,7 @@ get_header();
                     <div class="faq-list">
                         <details class="faq-item">
                             <summary>How does the platform work?</summary>
-                            <p>Compagni di Viaggi connects people who want to travel together. Organizers publish their trips and interested travelers can request to join.</p>
+                            <p>Journey Buddies connects people who want to travel together. Organizers publish their trips and interested travelers can request to join.</p>
                         </details>
 
                         <details class="faq-item">

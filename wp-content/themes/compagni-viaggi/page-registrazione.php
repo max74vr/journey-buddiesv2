@@ -24,7 +24,7 @@ get_header();
     <div class="container">
         <div class="registration-wrapper">
             <div class="registration-header">
-                <h1>Join Compagni di Viaggi</h1>
+                <h1>Join Journey Buddies</h1>
                 <p>Create your account and start finding travel companions.</p>
             </div>
 
