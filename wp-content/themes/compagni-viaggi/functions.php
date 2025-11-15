@@ -167,14 +167,25 @@ function cdv_travel_meta($post_id = null) {
             <span class="meta-item">
                 <span class="icon">📅</span>
                 <?php
-                if ($date_type === 'month') {
+                if ($date_type === 'month' && !empty($travel_month)) {
                     // Mostra "Mese indicativo" per date flessibili
-                    $month_to_display = $travel_month ? $travel_month . '-01' : $start_date;
-                    echo date_i18n('F Y', strtotime($month_to_display)) . ' (flexible)';
+                    $month_to_display = $travel_month . '-01';
+                    $timestamp = strtotime($month_to_display);
+                    if ($timestamp !== false) {
+                        echo date_i18n('F Y', $timestamp) . ' (flexible)';
+                    }
                 } else {
                     // Mostra date precise
-                    echo date_i18n('d/m/Y', strtotime($start_date));
-                    if ($end_date) echo ' - ' . date_i18n('d/m/Y', strtotime($end_date));
+                    $start_timestamp = strtotime($start_date);
+                    if ($start_timestamp !== false) {
+                        echo date_i18n('d/m/Y', $start_timestamp);
+                        if ($end_date) {
+                            $end_timestamp = strtotime($end_date);
+                            if ($end_timestamp !== false) {
+                                echo ' - ' . date_i18n('d/m/Y', $end_timestamp);
+                            }
+                        }
+                    }
                 }
                 ?>
             </span>

@@ -121,24 +121,39 @@ while (have_posts()) : the_post();
                             );
                             ?>
 
-                            <?php if ($date_type === 'month' && $travel_month) : ?>
+                            <?php if ($date_type === 'month' && !empty($travel_month)) : ?>
+                                <?php
+                                $month_timestamp = strtotime($travel_month . '-01');
+                                if ($month_timestamp !== false) :
+                                ?>
                                 <div class="detail-item">
                                     <strong>📅 Periodo:</strong>
-                                    <span><?php echo date_i18n('F Y', strtotime($travel_month . '-01')); ?> (flessibile)</span>
+                                    <span><?php echo date_i18n('F Y', $month_timestamp); ?> (flessibile)</span>
                                 </div>
+                                <?php endif; ?>
                             <?php else : ?>
                                 <?php if ($start_date) : ?>
+                                    <?php
+                                    $start_timestamp = strtotime($start_date);
+                                    if ($start_timestamp !== false) :
+                                    ?>
                                     <div class="detail-item">
                                         <strong>📅 Inizio:</strong>
-                                        <span><?php echo date_i18n('d M Y', strtotime($start_date)); ?></span>
+                                        <span><?php echo date_i18n('d M Y', $start_timestamp); ?></span>
                                     </div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
 
                                 <?php if ($end_date) : ?>
+                                    <?php
+                                    $end_timestamp = strtotime($end_date);
+                                    if ($end_timestamp !== false) :
+                                    ?>
                                     <div class="detail-item">
                                         <strong>📅 Fine:</strong>
-                                        <span><?php echo date_i18n('d M Y', strtotime($end_date)); ?></span>
+                                        <span><?php echo date_i18n('d M Y', $end_timestamp); ?></span>
                                     </div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             <?php endif; ?>
 
