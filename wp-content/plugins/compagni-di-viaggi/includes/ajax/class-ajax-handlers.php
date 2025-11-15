@@ -543,6 +543,30 @@ class CDV_Ajax_Handlers {
             wp_set_post_terms($travel_id, $travel_types, 'tipo_viaggio');
         }
 
+        // Save optional fields (with travel_ prefix from form)
+        $transport = isset($_POST['travel_transport']) && is_array($_POST['travel_transport']) ? array_map('sanitize_text_field', $_POST['travel_transport']) : array();
+        update_post_meta($travel_id, 'cdv_travel_transport', $transport);
+
+        if (isset($_POST['travel_accommodation'])) {
+            update_post_meta($travel_id, 'cdv_travel_accommodation', sanitize_text_field($_POST['travel_accommodation']));
+        }
+
+        if (isset($_POST['travel_difficulty'])) {
+            update_post_meta($travel_id, 'cdv_travel_difficulty', sanitize_text_field($_POST['travel_difficulty']));
+        }
+
+        if (isset($_POST['travel_meals'])) {
+            update_post_meta($travel_id, 'cdv_travel_meals', sanitize_text_field($_POST['travel_meals']));
+        }
+
+        if (isset($_POST['travel_guide_type'])) {
+            update_post_meta($travel_id, 'cdv_travel_guide_type', sanitize_text_field($_POST['travel_guide_type']));
+        }
+
+        if (isset($_POST['travel_requirements'])) {
+            update_post_meta($travel_id, 'cdv_travel_requirements', sanitize_textarea_field($_POST['travel_requirements']));
+        }
+
         // Add organizer as first participant
         global $wpdb;
         $table_name = $wpdb->prefix . 'cdv_travel_participants';
@@ -660,28 +684,28 @@ class CDV_Ajax_Handlers {
             wp_set_post_terms($travel_id, $travel_types, 'tipo_viaggio');
         }
 
-        // Update optional fields
-        $transport = isset($_POST['transport']) && is_array($_POST['transport']) ? array_map('sanitize_text_field', $_POST['transport']) : array();
+        // Update optional fields (with travel_ prefix from form)
+        $transport = isset($_POST['travel_transport']) && is_array($_POST['travel_transport']) ? array_map('sanitize_text_field', $_POST['travel_transport']) : array();
         update_post_meta($travel_id, 'cdv_travel_transport', $transport);
 
-        if (isset($_POST['accommodation'])) {
-            update_post_meta($travel_id, 'cdv_travel_accommodation', sanitize_text_field($_POST['accommodation']));
+        if (isset($_POST['travel_accommodation'])) {
+            update_post_meta($travel_id, 'cdv_travel_accommodation', sanitize_text_field($_POST['travel_accommodation']));
         }
 
-        if (isset($_POST['difficulty'])) {
-            update_post_meta($travel_id, 'cdv_travel_difficulty', sanitize_text_field($_POST['difficulty']));
+        if (isset($_POST['travel_difficulty'])) {
+            update_post_meta($travel_id, 'cdv_travel_difficulty', sanitize_text_field($_POST['travel_difficulty']));
         }
 
-        if (isset($_POST['meals'])) {
-            update_post_meta($travel_id, 'cdv_travel_meals', sanitize_text_field($_POST['meals']));
+        if (isset($_POST['travel_meals'])) {
+            update_post_meta($travel_id, 'cdv_travel_meals', sanitize_text_field($_POST['travel_meals']));
         }
 
-        if (isset($_POST['guide_type'])) {
-            update_post_meta($travel_id, 'cdv_travel_guide_type', sanitize_text_field($_POST['guide_type']));
+        if (isset($_POST['travel_guide_type'])) {
+            update_post_meta($travel_id, 'cdv_travel_guide_type', sanitize_text_field($_POST['travel_guide_type']));
         }
 
-        if (isset($_POST['requirements'])) {
-            update_post_meta($travel_id, 'cdv_travel_requirements', sanitize_textarea_field($_POST['requirements']));
+        if (isset($_POST['travel_requirements'])) {
+            update_post_meta($travel_id, 'cdv_travel_requirements', sanitize_textarea_field($_POST['travel_requirements']));
         }
 
         wp_send_json_success(array(
