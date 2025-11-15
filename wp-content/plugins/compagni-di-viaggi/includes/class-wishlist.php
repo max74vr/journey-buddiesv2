@@ -15,6 +15,24 @@ class CDV_Wishlist {
     public static function init() {
         // AJAX handlers
         add_action('wp_ajax_cdv_toggle_wishlist', array(__CLASS__, 'ajax_toggle_wishlist'));
+
+        // Ensure table exists
+        self::maybe_create_table();
+    }
+
+    /**
+     * Create table if it doesn't exist
+     */
+    public static function maybe_create_table() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'cdv_wishlist';
+
+        // Check if table exists
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+
+        if (!$table_exists) {
+            self::create_table();
+        }
     }
 
     /**
