@@ -256,6 +256,96 @@ function cdv_display_stars($rating, $max = 5) {
 }
 
 /**
+ * Get avatar color for user
+ * Returns a consistent color based on user ID
+ */
+function cdv_get_avatar_color($user_id) {
+    // Get the 10 customizable colors
+    $colors = array();
+    for ($i = 1; $i <= 10; $i++) {
+        $colors[] = get_theme_mod("cdv_avatar_color_$i", '');
+    }
+
+    // Filter out empty colors and use defaults if needed
+    $default_colors = array(
+        '#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b',
+        '#fa709a', '#fee140', '#30cfd0', '#a8edea', '#ff6b6b'
+    );
+
+    for ($i = 0; $i < 10; $i++) {
+        if (empty($colors[$i])) {
+            $colors[$i] = $default_colors[$i];
+        }
+    }
+
+    // Use modulo to get a consistent color index for this user
+    $color_index = $user_id % 10;
+    return $colors[$color_index];
+}
+
+/**
+ * Generate avatar with initial letter
+ * Returns HTML for a circular avatar with the first letter of the nickname
+ */
+function cdv_generate_letter_avatar($user_id, $size = 96) {
+    $user = get_userdata($user_id);
+    if (!$user) {
+        return '';
+    }
+
+    // Get first letter of nickname (user_login)
+    $letter = strtoupper(mb_substr($user->user_login, 0, 1));
+
+    // Get consistent color for this user
+    $bg_color = cdv_get_avatar_color($user_id);
+
+    // Calculate font size based on avatar size
+    $font_size = round($size * 0.5);
+
+    $html = sprintf(
+        '<div class="avatar avatar-letter" style="width: %1$dpx; height: %1$dpx; background-color: %2$s; color: white; border-radius: 50%%; display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: %3$dpx; line-height: 1; flex-shrink: 0;">%4$s</div>',
+        $size,
+        esc_attr($bg_color),
+        $font_size,
+        esc_html($letter)
+    );
+
+    return $html;
+}
+
+/**
+ * Filter get_avatar to use letter avatars when no image is available
+ */
+function cdv_custom_avatar($avatar, $id_or_email, $size, $default, $alt, $args) {
+    // Get user object
+    $user = false;
+    if (is_numeric($id_or_email)) {
+        $user = get_user_by('id', $id_or_email);
+    } elseif (is_object($id_or_email)) {
+        if (!empty($id_or_email->user_id)) {
+            $user = get_user_by('id', $id_or_email->user_id);
+        }
+    } elseif (is_string($id_or_email)) {
+        $user = get_user_by('email', $id_or_email);
+    }
+
+    if (!$user) {
+        return $avatar;
+    }
+
+    // Check if user has a custom avatar (not using default gravatar)
+    $has_custom_avatar = get_user_meta($user->ID, 'cdv_has_custom_avatar', true);
+
+    // If no custom avatar, use letter avatar
+    if (!$has_custom_avatar) {
+        return cdv_generate_letter_avatar($user->ID, $size);
+    }
+
+    return $avatar;
+}
+add_filter('get_avatar', 'cdv_custom_avatar', 10, 6);
+
+/**
  * Display travel type badges
  */
 function cdv_travel_type_badges($post_id = null) {

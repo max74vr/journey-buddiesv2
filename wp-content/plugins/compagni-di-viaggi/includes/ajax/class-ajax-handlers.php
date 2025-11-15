@@ -33,6 +33,17 @@ class CDV_Ajax_Handlers {
         // Travel creation
         add_action('wp_ajax_cdv_create_travel', array(__CLASS__, 'create_travel'));
 
+        // Notifications
+        add_action('wp_ajax_cdv_get_notifications', array(__CLASS__, 'get_notifications'));
+        add_action('wp_ajax_cdv_mark_notification_read', array(__CLASS__, 'mark_notification_read'));
+        add_action('wp_ajax_cdv_mark_all_notifications_read', array(__CLASS__, 'mark_all_notifications_read'));
+
+        // Statistics
+        add_action('wp_ajax_cdv_get_organizer_stats', array(__CLASS__, 'get_organizer_stats'));
+
+        // Referral
+        add_action('wp_ajax_cdv_get_referral_stats', array(__CLASS__, 'get_referral_stats'));
+
         // For non-logged-in users (if needed)
         // add_action('wp_ajax_nopriv_action_name', array(__CLASS__, 'method_name'));
     }
@@ -543,5 +554,184 @@ class CDV_Ajax_Handlers {
             'message' => 'Trip created successfully! Pending administrator approval.',
             'redirect_url' => home_url('/dashboard'),
         ));
+    }
+
+    /**
+     * AJAX: Get Notifications
+     */
+    public static function get_notifications() {
+        check_ajax_referer('cdv_ajax_nonce', 'nonce');
+
+        if (!is_user_logged_in()) {
+            wp_send_json_error(array('message' => 'You must be logged in.'));
+        }
+
+        $user_id = get_current_user_id();
+
+        // For now, return empty notifications as placeholder
+        // This should be replaced with actual notification system
+        $notifications = array();
+
+        wp_send_json_success(array(
+            'notifications' => $notifications,
+            'unread_count' => 0,
+        ));
+    }
+
+    /**
+     * AJAX: Mark Notification as Read
+     */
+    public static function mark_notification_read() {
+        check_ajax_referer('cdv_ajax_nonce', 'nonce');
+
+        if (!is_user_logged_in()) {
+            wp_send_json_error(array('message' => 'You must be logged in.'));
+        }
+
+        $notification_id = isset($_POST['notification_id']) ? intval($_POST['notification_id']) : 0;
+
+        if (!$notification_id) {
+            wp_send_json_error(array('message' => 'Invalid notification ID.'));
+        }
+
+        // Placeholder - implement actual logic
+        wp_send_json_success(array('message' => 'Notification marked as read.'));
+    }
+
+    /**
+     * AJAX: Mark All Notifications as Read
+     */
+    public static function mark_all_notifications_read() {
+        check_ajax_referer('cdv_ajax_nonce', 'nonce');
+
+        if (!is_user_logged_in()) {
+            wp_send_json_error(array('message' => 'You must be logged in.'));
+        }
+
+        $user_id = get_current_user_id();
+
+        // Placeholder - implement actual logic
+        wp_send_json_success(array('message' => 'All notifications marked as read.'));
+    }
+
+    /**
+     * AJAX: Get Organizer Statistics
+     */
+    public static function get_organizer_stats() {
+        check_ajax_referer('cdv_ajax_nonce', 'nonce');
+
+        if (!is_user_logged_in()) {
+            wp_send_json_error(array('message' => 'You must be logged in.'));
+        }
+
+        $user_id = get_current_user_id();
+        global $wpdb;
+
+        // Get trips organized by this user
+        $trips_query = new WP_Query(array(
+            'post_type' => 'viaggio',
+            'author' => $user_id,
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+        ));
+
+        $total_trips = $trips_query->found_posts;
+        $participants_table = $wpdb->prefix . 'cdv_travel_participants';
+
+        // Get total participants across all trips
+        $total_participants = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(DISTINCT user_id)
+             FROM $participants_table p
+             INNER JOIN {$wpdb->posts} t ON p.travel_id = t.ID
+             WHERE t.post_author = %d
+             AND p.status = 'accepted'
+             AND p.user_id != %d
+             AND t.post_status = 'publish'",
+            $user_id,
+            $user_id
+        ));
+
+        // Get pending requests
+        $pending_requests = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*)
+             FROM $participants_table p
+             INNER JOIN {$wpdb->posts} t ON p.travel_id = t.ID
+             WHERE t.post_author = %d
+             AND p.status = 'pending'
+             AND t.post_status = 'publish'",
+            $user_id
+        ));
+
+        // Get average rating (from reviews table if exists)
+        $reviews_table = $wpdb->prefix . 'cdv_reviews';
+        $avg_rating = $wpdb->get_var($wpdb->prepare(
+            "SELECT AVG((punctuality + group_spirit + respect + adaptability) / 4)
+             FROM $reviews_table
+             WHERE reviewed_user_id = %d",
+            $user_id
+        ));
+
+        $stats = array(
+            'total_trips' => intval($total_trips),
+            'total_participants' => intval($total_participants),
+            'pending_requests' => intval($pending_requests),
+            'avg_rating' => $avg_rating ? round(floatval($avg_rating), 1) : 0,
+        );
+
+        wp_send_json_success($stats);
+    }
+
+    /**
+     * AJAX: Get Referral Statistics
+     */
+    public static function get_referral_stats() {
+        check_ajax_referer('cdv_ajax_nonce', 'nonce');
+
+        if (!is_user_logged_in()) {
+            wp_send_json_error(array('message' => 'You must be logged in.'));
+        }
+
+        $user_id = get_current_user_id();
+
+        // Get referral code
+        $referral_code = get_user_meta($user_id, 'cdv_referral_code', true);
+
+        if (!$referral_code) {
+            // Generate a new referral code if doesn't exist
+            $referral_code = strtoupper(substr(md5($user_id . time()), 0, 8));
+            update_user_meta($user_id, 'cdv_referral_code', $referral_code);
+        }
+
+        global $wpdb;
+
+        // Get referred users
+        $referred_users = $wpdb->get_results($wpdb->prepare(
+            "SELECT u.ID, u.user_login, u.user_registered
+             FROM {$wpdb->users} u
+             INNER JOIN {$wpdb->usermeta} um ON u.ID = um.user_id
+             WHERE um.meta_key = 'cdv_referred_by'
+             AND um.meta_value = %s
+             ORDER BY u.user_registered DESC
+             LIMIT 50",
+            $referral_code
+        ));
+
+        $stats = array(
+            'referral_code' => $referral_code,
+            'total_referrals' => count($referred_users),
+            'referral_url' => home_url('/registration?ref=' . $referral_code),
+            'referred_users' => array_map(function($user) {
+                return array(
+                    'id' => $user->ID,
+                    'user_login' => $user->user_login,
+                    'created_at' => $user->user_registered,
+                    'status' => 'completed',
+                    'reward_given' => true,
+                    'reward_points' => 0,
+                );
+            }, $referred_users),
+        );
+
+        wp_send_json_success($stats);
     }
 }

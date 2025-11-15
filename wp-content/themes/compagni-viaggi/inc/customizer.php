@@ -646,9 +646,24 @@ function cdv_customize_register($wp_customize) {
         ),
     ));
 
+    // Footer Tagline
+    $wp_customize->add_setting('cdv_footer_tagline', array(
+        'default'           => 'Trova compagni di viaggio e organizza avventure insieme.',
+        'sanitize_callback' => 'sanitize_text_field',
+        'transport'         => 'refresh',
+    ));
+
+    $wp_customize->add_control('cdv_footer_tagline', array(
+        'label'       => 'Tagline Footer',
+        'description' => 'Breve descrizione sotto il logo nel footer',
+        'section'     => 'cdv_footer',
+        'settings'    => 'cdv_footer_tagline',
+        'type'        => 'text',
+    ));
+
     // Footer Copyright Text
     $wp_customize->add_setting('cdv_footer_copyright', array(
-        'default'           => '© ' . date('Y') . ' Compagni di viaggi. Tutti i diritti riservati.',
+        'default'           => '© ' . date('Y') . ' Journey Buddies. All rights reserved.',
         'sanitize_callback' => 'wp_kses_post',
         'transport'         => 'refresh',
     ));
@@ -660,6 +675,35 @@ function cdv_customize_register($wp_customize) {
         'settings'    => 'cdv_footer_copyright',
         'type'        => 'textarea',
     ));
+
+    // ========================================
+    // SECTION: Avatar Colors
+    // ========================================
+    $wp_customize->add_section('cdv_avatar_colors', array(
+        'title'       => 'Colori Avatar',
+        'description' => 'Colori per gli avatar con iniziale (quando l\'utente non ha una foto)',
+        'priority'    => 65,
+    ));
+
+    // Avatar colors (10 colors)
+    for ($i = 1; $i <= 10; $i++) {
+        $default_colors = array(
+            '#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b',
+            '#fa709a', '#fee140', '#30cfd0', '#a8edea', '#ff6b6b'
+        );
+
+        $wp_customize->add_setting("cdv_avatar_color_$i", array(
+            'default'           => $default_colors[$i - 1],
+            'sanitize_callback' => 'sanitize_hex_color',
+            'transport'         => 'refresh',
+        ));
+
+        $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, "cdv_avatar_color_$i", array(
+            'label'    => "Colore Avatar $i",
+            'section'  => 'cdv_avatar_colors',
+            'settings' => "cdv_avatar_color_$i",
+        )));
+    }
 }
 add_action('customize_register', 'cdv_customize_register');
 
