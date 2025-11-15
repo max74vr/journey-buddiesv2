@@ -42,10 +42,17 @@ $wishlist_travels = CDV_Wishlist::get_wishlist_travels($user_id);
                         $destination = get_post_meta($travel_id, 'cdv_destination', true);
                         $country = get_post_meta($travel_id, 'cdv_country', true);
                         $start_date = get_post_meta($travel_id, 'cdv_start_date', true);
+                        $date_type = get_post_meta($travel_id, 'cdv_date_type', true);
+                        $travel_month = get_post_meta($travel_id, 'cdv_travel_month', true);
                         $budget = get_post_meta($travel_id, 'cdv_budget', true);
                         $max_participants = get_post_meta($travel_id, 'cdv_max_participants', true);
                         $participants_count = CDV_Participants::get_participants_count($travel_id, 'accepted');
                         $status = get_post_meta($travel_id, 'cdv_travel_status', true);
+
+                        // Default date_type to 'precise' if not set
+                        if (empty($date_type)) {
+                            $date_type = 'precise';
+                        }
                         ?>
 
                         <article class="travel-card">
@@ -77,9 +84,27 @@ $wishlist_travels = CDV_Wishlist::get_wishlist_travels($user_id);
                                         </span>
                                     <?php endif; ?>
 
-                                    <?php if ($start_date) : ?>
+                                    <?php if ($date_type === 'month' && !empty($travel_month)) : ?>
                                         <span class="meta-item">
-                                            <strong>📅</strong> <?php echo date_i18n('d M Y', strtotime($start_date)); ?>
+                                            <strong>📅</strong> <?php
+                                                $month_timestamp = strtotime($travel_month . '-01');
+                                                if ($month_timestamp !== false) {
+                                                    echo esc_html(date('F Y', $month_timestamp));
+                                                } else {
+                                                    echo esc_html($travel_month);
+                                                }
+                                                ?> <em style="color: #999;">(flexible)</em>
+                                        </span>
+                                    <?php elseif (!empty($start_date)) : ?>
+                                        <span class="meta-item">
+                                            <strong>📅</strong> <?php
+                                                $start_timestamp = strtotime($start_date);
+                                                if ($start_timestamp !== false) {
+                                                    echo esc_html(date('M d, Y', $start_timestamp));
+                                                } else {
+                                                    echo esc_html($start_date);
+                                                }
+                                                ?>
                                         </span>
                                     <?php endif; ?>
 

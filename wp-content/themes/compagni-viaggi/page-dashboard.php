@@ -502,8 +502,33 @@ $received_reviews = CDV_Reviews::get_user_reviews($current_user->ID, 20);
                                             <?php
                                             $start_date = get_post_meta($travel->ID, 'cdv_start_date', true);
                                             $end_date = get_post_meta($travel->ID, 'cdv_end_date', true);
-                                            if ($start_date && $end_date) {
-                                                echo date_i18n('d/m/Y', strtotime($start_date)) . ' - ' . date_i18n('d/m/Y', strtotime($end_date));
+                                            $date_type = get_post_meta($travel->ID, 'cdv_date_type', true);
+                                            $travel_month = get_post_meta($travel->ID, 'cdv_travel_month', true);
+
+                                            // Default date_type to 'precise' if not set (for legacy trips)
+                                            if (empty($date_type)) {
+                                                $date_type = 'precise';
+                                            }
+
+                                            if ($date_type === 'month' && !empty($travel_month)) {
+                                                // Show flexible month
+                                                $month_timestamp = strtotime($travel_month . '-01');
+                                                if ($month_timestamp !== false) {
+                                                    echo esc_html(date('F Y', $month_timestamp)) . ' <em style="color: #999;">(flexible)</em>';
+                                                } else {
+                                                    echo esc_html($travel_month) . ' <em style="color: #999;">(flexible)</em>';
+                                                }
+                                            } elseif (!empty($start_date) && !empty($end_date)) {
+                                                // Show specific dates
+                                                $start_timestamp = strtotime($start_date);
+                                                $end_timestamp = strtotime($end_date);
+                                                if ($start_timestamp !== false && $end_timestamp !== false) {
+                                                    echo esc_html(date('m/d/Y', $start_timestamp)) . ' - ' . esc_html(date('m/d/Y', $end_timestamp));
+                                                } elseif ($start_timestamp !== false) {
+                                                    echo esc_html(date('m/d/Y', $start_timestamp));
+                                                } else {
+                                                    echo esc_html($start_date) . ' - ' . esc_html($end_date);
+                                                }
                                             }
                                             ?>
                                         </p>
@@ -649,9 +674,16 @@ $received_reviews = CDV_Reviews::get_user_reviews($current_user->ID, 20);
                         $destination = get_post_meta($travel_id, 'cdv_destination', true);
                         $country = get_post_meta($travel_id, 'cdv_country', true);
                         $start_date = get_post_meta($travel_id, 'cdv_start_date', true);
+                        $date_type = get_post_meta($travel_id, 'cdv_date_type', true);
+                        $travel_month = get_post_meta($travel_id, 'cdv_travel_month', true);
                         $budget = get_post_meta($travel_id, 'cdv_budget', true);
                         $max_participants = get_post_meta($travel_id, 'cdv_max_participants', true);
                         $participants_count = CDV_Participants::get_participant_count($travel_id, 'accepted');
+
+                        // Default date_type to 'precise' if not set
+                        if (empty($date_type)) {
+                            $date_type = 'precise';
+                        }
                     ?>
                         <div class="wishlist-card">
                             <?php if (has_post_thumbnail()) : ?>
@@ -682,9 +714,27 @@ $received_reviews = CDV_Reviews::get_user_reviews($current_user->ID, 20);
                                         </span>
                                     <?php endif; ?>
 
-                                    <?php if ($start_date) : ?>
+                                    <?php if ($date_type === 'month' && !empty($travel_month)) : ?>
                                         <span class="meta-item">
-                                            <strong>📅</strong> <?php echo date_i18n('d M Y', strtotime($start_date)); ?>
+                                            <strong>📅</strong> <?php
+                                                $month_timestamp = strtotime($travel_month . '-01');
+                                                if ($month_timestamp !== false) {
+                                                    echo esc_html(date('F Y', $month_timestamp));
+                                                } else {
+                                                    echo esc_html($travel_month);
+                                                }
+                                                ?> <em style="color: #999;">(flexible)</em>
+                                        </span>
+                                    <?php elseif (!empty($start_date)) : ?>
+                                        <span class="meta-item">
+                                            <strong>📅</strong> <?php
+                                                $start_timestamp = strtotime($start_date);
+                                                if ($start_timestamp !== false) {
+                                                    echo esc_html(date('M d, Y', $start_timestamp));
+                                                } else {
+                                                    echo esc_html($start_date);
+                                                }
+                                                ?>
                                         </span>
                                     <?php endif; ?>
 
