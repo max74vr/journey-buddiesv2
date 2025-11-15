@@ -121,24 +121,61 @@ while (have_posts()) : the_post();
                             );
                             ?>
 
-                            <?php if ($date_type === 'month' && $travel_month) : ?>
+                            <?php
+                            // Default date_type to 'precise' if not set
+                            if (empty($date_type)) {
+                                $date_type = 'precise';
+                            }
+                            ?>
+
+                            <?php if ($date_type === 'month' && !empty($travel_month)) : ?>
+                                <?php
+                                $month_timestamp = strtotime($travel_month . '-01');
+                                if ($month_timestamp !== false) :
+                                ?>
                                 <div class="detail-item">
-                                    <strong>📅 Periodo:</strong>
-                                    <span><?php echo date_i18n('F Y', strtotime($travel_month . '-01')); ?> (flessibile)</span>
+                                    <strong>📅 Period:</strong>
+                                    <span><?php echo esc_html(date('F Y', $month_timestamp)); ?> <em style="color: var(--text-medium);">(flexible)</em></span>
                                 </div>
+                                <?php else : ?>
+                                <div class="detail-item">
+                                    <strong>📅 Period:</strong>
+                                    <span><?php echo esc_html($travel_month); ?> <em style="color: var(--text-medium);">(flexible)</em></span>
+                                </div>
+                                <?php endif; ?>
                             <?php else : ?>
-                                <?php if ($start_date) : ?>
+                                <?php if (!empty($start_date)) : ?>
+                                    <?php
+                                    $start_timestamp = strtotime($start_date);
+                                    if ($start_timestamp !== false) :
+                                    ?>
                                     <div class="detail-item">
-                                        <strong>📅 Inizio:</strong>
-                                        <span><?php echo date_i18n('d M Y', strtotime($start_date)); ?></span>
+                                        <strong>📅 Start:</strong>
+                                        <span><?php echo esc_html(date('M d, Y', $start_timestamp)); ?></span>
                                     </div>
+                                    <?php else : ?>
+                                    <div class="detail-item">
+                                        <strong>📅 Start:</strong>
+                                        <span><?php echo esc_html($start_date); ?></span>
+                                    </div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
 
-                                <?php if ($end_date) : ?>
+                                <?php if (!empty($end_date)) : ?>
+                                    <?php
+                                    $end_timestamp = strtotime($end_date);
+                                    if ($end_timestamp !== false) :
+                                    ?>
                                     <div class="detail-item">
-                                        <strong>📅 Fine:</strong>
-                                        <span><?php echo date_i18n('d M Y', strtotime($end_date)); ?></span>
+                                        <strong>📅 End:</strong>
+                                        <span><?php echo esc_html(date('M d, Y', $end_timestamp)); ?></span>
                                     </div>
+                                    <?php else : ?>
+                                    <div class="detail-item">
+                                        <strong>📅 End:</strong>
+                                        <span><?php echo esc_html($end_date); ?></span>
+                                    </div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             <?php endif; ?>
 

@@ -147,11 +147,17 @@ function cdv_travel_meta($post_id = null) {
     $start_date = get_post_meta($post_id, 'cdv_start_date', true);
     $end_date = get_post_meta($post_id, 'cdv_end_date', true);
     $date_type = get_post_meta($post_id, 'cdv_date_type', true);
+    $travel_month = get_post_meta($post_id, 'cdv_travel_month', true);
     $destination = get_post_meta($post_id, 'cdv_destination', true);
     $country = get_post_meta($post_id, 'cdv_country', true);
     $budget = get_post_meta($post_id, 'cdv_budget', true);
     $max_participants = get_post_meta($post_id, 'cdv_max_participants', true);
     $current_participants = CDV_Participants::get_participant_count($post_id);
+
+    // Default date_type to 'precise' if not set
+    if (empty($date_type)) {
+        $date_type = 'precise';
+    }
 
     ?>
     <div class="travel-meta">
@@ -162,17 +168,39 @@ function cdv_travel_meta($post_id = null) {
             </span>
         <?php endif; ?>
 
-        <?php if ($start_date) : ?>
+        <?php if (!empty($start_date)) : ?>
             <span class="meta-item">
                 <span class="icon">📅</span>
                 <?php
-                if ($date_type === 'month') {
-                    // Mostra solo il mese
-                    echo date_i18n('F Y', strtotime($start_date));
+                if ($date_type === 'month' && !empty($travel_month)) {
+                    // Show flexible month
+                    $month_to_display = $travel_month . '-01';
+                    $timestamp = strtotime($month_to_display);
+                    if ($timestamp !== false) {
+                        // Use date() instead of date_i18n() for English output
+                        echo esc_html(date('F Y', $timestamp)) . ' <span style="color: var(--text-medium); font-size: 0.9em;">(flexible)</span>';
+                    } else {
+                        // Fallback if timestamp fails
+                        echo esc_html($travel_month) . ' <span style="color: var(--text-medium); font-size: 0.9em;">(flexible)</span>';
+                    }
                 } else {
-                    // Mostra date precise
-                    echo date_i18n('d/m/Y', strtotime($start_date));
-                    if ($end_date) echo ' - ' . date_i18n('d/m/Y', strtotime($end_date));
+                    // Show specific dates
+                    $start_timestamp = strtotime($start_date);
+                    if ($start_timestamp !== false) {
+                        echo esc_html(date('m/d/Y', $start_timestamp));
+                        if (!empty($end_date)) {
+                            $end_timestamp = strtotime($end_date);
+                            if ($end_timestamp !== false) {
+                                echo ' - ' . esc_html(date('m/d/Y', $end_timestamp));
+                            }
+                        }
+                    } else {
+                        // Fallback if timestamp fails
+                        echo esc_html($start_date);
+                        if (!empty($end_date)) {
+                            echo ' - ' . esc_html($end_date);
+                        }
+                    }
                 }
                 ?>
             </span>
