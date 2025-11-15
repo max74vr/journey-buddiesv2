@@ -480,9 +480,18 @@ while (have_posts()) : the_post();
                     </div>
 
                     <!-- Wishlist Card -->
-                    <?php if (class_exists('CDV_Wishlist')) : ?>
+                    <?php if (is_user_logged_in() && class_exists('CDV_Wishlist')) : ?>
                     <div class="sidebar-card wishlist-card">
-                        <?php echo CDV_Wishlist::get_wishlist_button_html($travel_id, 'btn btn-secondary wishlist-toggle-btn'); ?>
+                        <?php
+                        $is_in_wishlist = CDV_Wishlist::is_in_wishlist(get_current_user_id(), $travel_id);
+                        $wishlist_class = $is_in_wishlist ? 'wishlist-active' : '';
+                        $wishlist_icon = $is_in_wishlist ? '❤️' : '🤍';
+                        $wishlist_text = $is_in_wishlist ? 'Saved' : 'Save trip';
+                        ?>
+                        <button class="btn btn-secondary wishlist-toggle-btn wishlist-btn <?php echo $wishlist_class; ?>" data-travel-id="<?php echo $travel_id; ?>">
+                            <span class="wishlist-icon"><?php echo $wishlist_icon; ?></span>
+                            <span class="wishlist-text"><?php echo $wishlist_text; ?></span>
+                        </button>
                         <p class="wishlist-help-text">Save this trip for later</p>
                     </div>
                     <?php endif; ?>
