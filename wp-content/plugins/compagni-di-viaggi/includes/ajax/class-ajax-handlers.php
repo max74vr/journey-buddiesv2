@@ -528,6 +528,12 @@ class CDV_Ajax_Handlers {
         update_post_meta($travel_id, 'cdv_max_participants', $max_participants);
         update_post_meta($travel_id, 'cdv_travel_status', 'open');
 
+        // Save travel_month if date_type is 'month'
+        if ($date_type === 'month' && isset($_POST['travel_month'])) {
+            $travel_month = sanitize_text_field($_POST['travel_month']);
+            update_post_meta($travel_id, 'cdv_travel_month', $travel_month);
+        }
+
         // Set travel types
         if (isset($_POST['travel_types']) && is_array($_POST['travel_types'])) {
             $travel_types = array_map('intval', $_POST['travel_types']);

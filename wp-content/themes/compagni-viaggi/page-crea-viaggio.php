@@ -653,7 +653,15 @@ jQuery(document).ready(function($) {
                 return;
             }
 
+            // Calculate start and end dates from month value (YYYY-MM format)
+            const [year, month] = monthValue.split('-');
+            const firstDay = `${year}-${month}-01`;
+            const lastDay = new Date(year, month, 0).getDate(); // 0 gives last day of previous month
+            const lastDayFormatted = `${year}-${month}-${String(lastDay).padStart(2, '0')}`;
+
             dataToSend.travel_month = monthValue;
+            dataToSend.start_date = firstDay;
+            dataToSend.end_date = lastDayFormatted;
             dataToSend.date_type = 'month';
         }
 
