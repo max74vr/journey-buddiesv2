@@ -121,6 +121,9 @@ class CDV_Database {
         // Table: private_messages
         CDV_Private_Messages::create_table();
 
+        // Table: wishlist
+        CDV_Wishlist::create_table();
+
         // Update version
         update_option('cdv_db_version', '1.2.0');
     }
@@ -140,6 +143,7 @@ class CDV_Database {
             $wpdb->prefix . 'cdv_email_verification',
             $wpdb->prefix . 'cdv_private_messages',
             $wpdb->prefix . 'cdv_blocked_conversations',
+            $wpdb->prefix . 'cdv_wishlist',
         );
 
         foreach ($tables as $table) {
