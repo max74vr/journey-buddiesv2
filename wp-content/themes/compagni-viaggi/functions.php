@@ -759,3 +759,96 @@ function cdv_force_viaggio_archive_template($template) {
     return $template;
 }
 add_filter('template_include', 'cdv_force_viaggio_archive_template');
+
+/**
+ * Add global wishlist toggle JavaScript
+ */
+function cdv_wishlist_global_script() {
+    if (!is_user_logged_in()) {
+        return;
+    }
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        // Global wishlist toggle for both .wishlist-btn and .wishlist-btn-inline
+        $(document).on('click', '.wishlist-btn, .wishlist-btn-inline', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const $btn = $(this);
+            const travelId = $btn.data('travel-id');
+
+            if (!travelId) {
+                console.error('No travel ID found');
+                return;
+            }
+
+            // Disable button during request
+            $btn.prop('disabled', true);
+
+            $.ajax({
+                url: cdvAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'cdv_toggle_wishlist',
+                    nonce: cdvAjax.nonce,
+                    travel_id: travelId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        const inWishlist = response.data.in_wishlist;
+
+                        // Update button based on type
+                        if ($btn.hasClass('wishlist-btn-inline')) {
+                            // Inline button (card view) - use emoji
+                            if (inWishlist) {
+                                $btn.addClass('active');
+                                $btn.find('.wishlist-icon').text('❤️');
+                                $btn.attr('title', 'Remove from wishlist');
+                            } else {
+                                $btn.removeClass('active');
+                                $btn.find('.wishlist-icon').text('🤍');
+                                $btn.attr('title', 'Add to wishlist');
+                            }
+                        } else {
+                            // Regular wishlist button - use text + icon
+                            if (inWishlist) {
+                                $btn.addClass('wishlist-active');
+                                $btn.find('.wishlist-icon').text('♥');
+                                $btn.find('.wishlist-text').text('Saved');
+                            } else {
+                                $btn.removeClass('wishlist-active');
+                                $btn.find('.wishlist-icon').text('♡');
+                                $btn.find('.wishlist-text').text('Save');
+                            }
+                        }
+
+                        // Show notification if function exists
+                        if (typeof showNotification === 'function') {
+                            showNotification(response.data.message, 'success');
+                        }
+                    } else {
+                        if (typeof showNotification === 'function') {
+                            showNotification(response.data.message || 'Error', 'error');
+                        } else {
+                            alert(response.data.message || 'Error');
+                        }
+                    }
+                },
+                error: function() {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Connection error', 'error');
+                    } else {
+                        alert('Connection error');
+                    }
+                },
+                complete: function() {
+                    $btn.prop('disabled', false);
+                }
+            });
+        });
+    });
+    </script>
+    <?php
+}
+add_action('wp_footer', 'cdv_wishlist_global_script');
