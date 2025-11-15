@@ -98,7 +98,7 @@ class CDV_User_Profiles {
         $profile = array(
             'ID' => $user->ID,
             'username' => $user->user_login,
-            'display_name' => $user->display_name,
+            'display_name' => $user->user_login,
             'avatar_url' => get_avatar_url($user->ID, array('size' => 200)),
             'bio' => get_user_meta($user->ID, 'cdv_bio', true),
             'city' => get_user_meta($user->ID, 'cdv_city', true),

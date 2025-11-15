@@ -29,7 +29,7 @@ get_header();
                         <span class="post-author">
                             <?php echo get_avatar(get_the_author_meta('ID'), 32); ?>
                             <a href="<?php echo esc_url(get_author_posts_url(get_the_author_meta('ID'))); ?>">
-                                <?php echo get_the_author(); ?>
+                                <?php echo get_the_author_meta('user_login'); ?>
                             </a>
                         </span>
                         <span class="post-date">
@@ -98,12 +98,12 @@ get_header();
                         <div class="author-info">
                             <h3 class="author-name">
                                 <a href="<?php echo esc_url(get_author_posts_url($author_id)); ?>">
-                                    <?php echo get_the_author(); ?>
+                                    <?php echo get_the_author_meta('user_login'); ?>
                                 </a>
                             </h3>
                             <p class="author-bio"><?php echo esc_html($author_description); ?></p>
                             <a href="<?php echo esc_url(get_author_posts_url($author_id)); ?>" class="author-link">
-                                Altri articoli di <?php echo get_the_author(); ?>
+                                Altri articoli di <?php echo get_the_author_meta('user_login'); ?>
                             </a>
                         </div>
                     </div>

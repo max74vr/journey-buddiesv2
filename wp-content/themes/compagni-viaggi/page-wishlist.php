@@ -106,7 +106,7 @@ if (class_exists('CDV_Wishlist')) {
                                 <div class="travel-card-footer">
                                     <div class="organizer-info">
                                         <?php echo get_avatar($author_id, 32); ?>
-                                        <span><?php echo esc_html(get_the_author_meta('display_name')); ?></span>
+                                        <span><?php echo esc_html(get_the_author_meta('user_login')); ?></span>
                                     </div>
 
                                     <a href="<?php the_permalink(); ?>" class="btn-primary btn-small">

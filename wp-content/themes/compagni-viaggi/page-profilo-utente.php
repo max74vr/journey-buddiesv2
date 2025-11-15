@@ -214,7 +214,7 @@ $is_own_profile = is_user_logged_in() && get_current_user_id() == $user->ID;
             global $wpdb;
             $reviews_table = $wpdb->prefix . 'cdv_reviews';
             $reviews = $wpdb->get_results($wpdb->prepare(
-                "SELECT r.*, u.display_name as reviewer_name
+                "SELECT r.*, u.user_login as reviewer_name
                 FROM $reviews_table r
                 LEFT JOIN {$wpdb->users} u ON r.reviewer_id = u.ID
                 WHERE r.reviewed_user_id = %d

@@ -101,7 +101,7 @@ class CDV_Ajax_Handlers {
                 'id' => $result,
                 'user' => array(
                     'id' => $user->ID,
-                    'name' => $user->display_name,
+                    'name' => $user->user_login,
                     'avatar' => get_avatar_url($user->ID, array('size' => 40)),
                 ),
                 'message' => $message,
@@ -141,7 +141,7 @@ class CDV_Ajax_Handlers {
                 'id' => $msg->id,
                 'user' => array(
                     'id' => $user->ID,
-                    'name' => $user->display_name,
+                    'name' => $user->user_login,
                     'avatar' => get_avatar_url($user->ID, array('size' => 40)),
                 ),
                 'message' => $msg->message,

@@ -1236,3 +1236,49 @@ td {
         border: 3px solid var(--primary-color);
     }
 }
+
+/* ========================================
+   AVATAR STYLES - Ensure all avatars are perfectly circular
+======================================== */
+.avatar,
+img.avatar,
+.wp-post-image.avatar {
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    width: auto;
+    height: auto;
+    aspect-ratio: 1 / 1;
+}
+
+/* Request user avatar */
+.request-user img,
+.request-user .avatar {
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    aspect-ratio: 1 / 1;
+}
+
+/* Referral avatar circles */
+.referral-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50% !important;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* User avatar in various contexts */
+.user-avatar,
+.author-avatar,
+.reviewer-avatar,
+.organizer-info img {
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    aspect-ratio: 1 / 1;
+}

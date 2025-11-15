@@ -184,11 +184,11 @@ class CDV_Private_Messages {
             return false;
         }
 
-        $subject = 'New message from ' . $sender->display_name;
+        $subject = 'New message from ' . $sender->user_login;
         $message = sprintf(
             "Hi %s,\n\n%s sent you a new message about the trip \"%s\".\n\nOpen your dashboard to read it:\n%s\n\nDo not reply to this email.\n\nCompagni di Viaggi",
-            $receiver->display_name,
-            $sender->display_name,
+            $receiver->user_login,
+            $sender->user_login,
             $travel->post_title,
             home_url('/dashboard?tab=messages&travel_id=' . $travel_id)
         );
@@ -424,7 +424,7 @@ class CDV_Private_Messages {
             if ($other_user && $travel) {
                 $formatted[] = array(
                     'other_user_id' => $conv->other_user_id,
-                    'other_user_name' => $other_user->display_name,
+                    'other_user_name' => $other_user->user_login,
                     'avatar' => get_avatar($conv->other_user_id, 48),
                     'travel_id' => $conv->travel_id,
                     'travel_title' => $travel->post_title,

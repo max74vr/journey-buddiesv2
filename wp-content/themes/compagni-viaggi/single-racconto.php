@@ -71,7 +71,7 @@ while (have_posts()) : the_post();
                         <?php echo get_avatar($author_id, 60, '', '', array('style' => 'border-radius: 50%;')); ?>
                         <div>
                             <div style="font-weight: 600; font-size: 1.1rem; color: var(--text-dark);">
-                                <?php echo esc_html(get_the_author()); ?>
+                                <?php echo esc_html(get_the_author_meta('user_login')); ?>
                             </div>
                             <div style="font-size: 0.9rem; color: var(--text-light);">
                                 <?php echo get_the_date(); ?>

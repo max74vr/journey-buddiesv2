@@ -112,7 +112,7 @@ $search_query = get_search_query();
                                     <?php if (get_post_type() === 'post') : ?>
                                         <span class="result-author">
                                             <?php echo get_avatar(get_the_author_meta('ID'), 24); ?>
-                                            <?php echo get_the_author(); ?>
+                                            <?php echo get_the_author_meta('user_login'); ?>
                                         </span>
                                     <?php endif; ?>
 

@@ -261,7 +261,7 @@ class CDV_Chat {
             $formatted_messages[] = array(
                 'id' => $msg->id,
                 'user_id' => $msg->user_id,
-                'user_name' => $user ? $user->display_name : 'Unknown',
+                'user_name' => $user ? $user->user_login : 'Unknown',
                 'avatar' => get_avatar($msg->user_id, 40),
                 'message' => wp_kses_post(nl2br($msg->message)),
                 'created_at' => $msg->created_at,
@@ -326,8 +326,8 @@ class CDV_Chat {
         $subject = sprintf('Question about: %s', $travel->post_title);
         $email_message = sprintf(
             "Hi %s,\n\n%s (%s) has sent you a question about the trip \"%s\":\n\n%s\n\nYou can reply to this email to contact them directly.\n\nJourney Buddies",
-            $organizer->display_name,
-            $sender->display_name,
+            $organizer->user_login,
+            $sender->user_login,
             $sender->user_email,
             $travel->post_title,
             $message

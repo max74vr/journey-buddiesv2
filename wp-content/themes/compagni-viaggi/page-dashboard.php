@@ -64,7 +64,7 @@ $pending_requests = $wpdb->get_results($wpdb->prepare(
 
 // Richieste pendenti INVIATE (per viaggiatori)
 $my_pending_requests = $wpdb->get_results($wpdb->prepare(
-    "SELECT p.*, t.post_title, t.post_author, u.display_name as organizer_name
+    "SELECT p.*, t.post_title, t.post_author, u.user_login as organizer_name
     FROM $participants_table p
     LEFT JOIN {$wpdb->posts} t ON p.travel_id = t.ID
     LEFT JOIN {$wpdb->users} u ON t.post_author = u.ID
@@ -494,7 +494,7 @@ $received_reviews = CDV_Reviews::get_user_reviews($current_user->ID, 20);
                                         <?php echo get_avatar($reviewed_user->ID, 50); ?>
                                     </div>
                                     <div class="review-item-info">
-                                        <h4><?php echo esc_html($reviewed_user->display_name); ?></h4>
+                                        <h4><?php echo esc_html($reviewed_user->user_login); ?></h4>
                                         <p class="travel-title">
                                             <i class="icon-map"></i>
                                             <a href="<?php echo get_permalink($travel->ID); ?>" target="_blank">
@@ -516,7 +516,7 @@ $received_reviews = CDV_Reviews::get_user_reviews($current_user->ID, 20);
                                     <button class="btn btn-primary btn-write-review"
                                             data-travel-id="<?php echo $pending_review['travel_id']; ?>"
                                             data-user-id="<?php echo $pending_review['user_id']; ?>"
-                                            data-user-name="<?php echo esc_attr($reviewed_user->display_name); ?>"
+                                            data-user-name="<?php echo esc_attr($reviewed_user->user_login); ?>"
                                             data-travel-title="<?php echo esc_attr($travel->post_title); ?>">
                                         Write Review
                                     </button>
@@ -552,7 +552,7 @@ $received_reviews = CDV_Reviews::get_user_reviews($current_user->ID, 20);
                                     <div class="reviewer-info">
                                         <?php echo get_avatar($reviewer->ID, 40); ?>
                                         <div>
-                                            <strong><?php echo esc_html($reviewer->display_name); ?></strong>
+                                            <strong><?php echo esc_html($reviewer->user_login); ?></strong>
                                             <p class="review-date"><?php echo date_i18n('d/m/Y', strtotime($review->created_at)); ?></p>
                                         </div>
                                     </div>
@@ -3592,10 +3592,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             historyHTML += `
                                 <div class="referral-item">
                                     <div class="referral-avatar">
-                                        ${ref.display_name.charAt(0).toUpperCase()}
+                                        ${ref.user_login.charAt(0).toUpperCase()}
                                     </div>
                                     <div class="referral-details">
-                                        <div class="referral-name">${ref.display_name}</div>
+                                        <div class="referral-name">${ref.user_login}</div>
                                         <div class="referral-date">Registrato il ${date}</div>
                                     </div>
                                     <div class="referral-status status-${statusClass}">

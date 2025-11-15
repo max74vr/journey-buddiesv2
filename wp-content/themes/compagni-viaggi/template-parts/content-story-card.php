@@ -43,7 +43,7 @@ $categories = get_the_terms(get_the_ID(), 'categoria_racconto');
             <div class="story-meta">
                 <div class="story-author">
                     <?php echo get_avatar($author_id, 32); ?>
-                    <span><?php echo esc_html(get_the_author()); ?></span>
+                    <span><?php echo esc_html(get_the_author_meta('user_login')); ?></span>
                 </div>
 
                 <div class="story-stats">

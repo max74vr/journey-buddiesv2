@@ -14,7 +14,6 @@
                 }
                 ?>
                 <p><?php bloginfo('description'); ?></p>
-                <p>Find travel companions and organize adventures together.</p>
             </div>
 
             <?php if (is_active_sidebar('footer-1')) : ?>
