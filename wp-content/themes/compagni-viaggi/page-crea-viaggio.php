@@ -198,12 +198,12 @@ get_header();
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="travel_start_date">Start Date <span class="required">*</span></label>
-                                    <input type="date" id="travel_start_date" name="travel_start_date" min="<?php echo date('Y-m-d'); ?>">
+                                    <input type="date" id="travel_start_date" name="travel_start_date" min="<?php echo date('Y-m-d'); ?>" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="travel_end_date">End Date <span class="required">*</span></label>
-                                    <input type="date" id="travel_end_date" name="travel_end_date" min="<?php echo date('Y-m-d'); ?>">
+                                    <input type="date" id="travel_end_date" name="travel_end_date" min="<?php echo date('Y-m-d'); ?>" required>
                                 </div>
                             </div>
                         </div>
@@ -589,6 +589,7 @@ jQuery(document).ready(function($) {
 
     // Initialize on page load
     $('#travel_country_select').trigger('change');
+    $('input[name="date_type"]:checked').trigger('change');
 
     $('#create-travel-form').on('submit', function(e) {
         e.preventDefault();
