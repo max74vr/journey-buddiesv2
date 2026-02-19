@@ -277,7 +277,7 @@ class CDV_Ajax_Handlers {
         }
 
         // Validate status
-        $valid_statuses = array('open', 'full', 'closed', 'completed');
+        $valid_statuses = array('open', 'full', 'in_progress', 'closed', 'completed', 'cancelled');
         if (!in_array($status, $valid_statuses)) {
             wp_send_json_error('Invalid status.');
         }
@@ -501,10 +501,6 @@ class CDV_Ajax_Handlers {
             if (strtotime($end_date) <= strtotime($start_date)) {
                 wp_send_json_error(array('message' => 'The end date must be after the start date.'));
             }
-
-            if (strtotime($start_date) < strtotime('today')) {
-                wp_send_json_error(array('message' => 'The start date cannot be in the past.'));
-            }
         }
 
         if (empty($title) || empty($description) || empty($destination) || empty($country) || $budget <= 0 || $max_participants < 2) {
@@ -644,10 +640,6 @@ class CDV_Ajax_Handlers {
             // Validate dates
             if (strtotime($end_date) <= strtotime($start_date)) {
                 wp_send_json_error(array('message' => 'The end date must be after the start date.'));
-            }
-
-            if (strtotime($start_date) < strtotime('today')) {
-                wp_send_json_error(array('message' => 'The start date cannot be in the past.'));
             }
         }
 
